@@ -19,7 +19,7 @@
                 <option value="" selected>--Please choose an option--</option>
                 <option value="RIA">RIA</option>
                 <option value="MONEYGRAM">MONEYGRAM</option>
-                <option value="WESTERN UNION">WESTERN UNION</option>
+                <option value="WESTERN_UNION">WESTERN_UNION</option>
             </select>
         </label><br>
         <label for="Zone">
@@ -29,7 +29,7 @@
             </select>
         </label><br><br>
         <label for="Montant">
-            Montant de transaction (max 1 000 000):<br>
+            Montant de transaction (max <span id="MontantAchanger"></span>):<br>
             <input type="text" placeholder="" id="Montant">
         </label><br><br>
         <button type="submit">Generation</button>
@@ -38,12 +38,13 @@
     <div class="second-box">
         <p>Resultat de repartition de comission: </p>
     <table id="output-table">
-        <p style="text-align: center;" id="result">TTC<br></p>
+        <p style="text-align: center;">TTC<br></p>
+        <p style="text-align: center;" id="result"></p>
         <tr>
             <th>HT</th>
             <th>Comission d'envoi</th>
             <th>TVA</th>
-            <th>TTA</th>
+            <th id="TTA-tochange">TTA</th>
         </tr>
         <tr>
             <td id="HT-value">0</td>
@@ -53,9 +54,9 @@
         </tr>
         <tr>
             <th>QUOTE-PART BACM</th>
-            <th>ACCOMPTE SUR QUOTE-PART MONEYGRAM</th>
-            <th>QUOTE-PART MONEYGRAM</th>
-            <th>TOTAL QUOTE-PART MONEYGRAM</th>
+            <th>ACCOMPTE SUR QUOTE-PART <span class="nomMoneygram"></span></th>
+            <th>QUOTE-PART <span class="nomMoneygram"></span></th>
+            <th>TOTAL QUOTE-PART <span class="nomMoneygram"></span></th>
         </tr>
         <tr>
             <td id="QPBACM-value">0</td>
