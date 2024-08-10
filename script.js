@@ -7,9 +7,9 @@ function UpdateTheSecondDropdown()
     secondDropdown.innerHTML = "";
 
     var options = {
-        RIA: ["V6 CEMAC", "V8 UEMOA","GUINEE EQUATORIALE", "TX BENIN", "TW US ET CANADA", "TY FRANCE ET BELGIQUE", "VZ INTERNATIONAL"],
+        RIA: ["V6CEMAC", "V8UEMOA","GUINEEEQUATORIALE", "TXBENIN", "TWUSETCANADA", "TYFRANCEETBELGIQUE", "VZINTERNATIONAL"],
         MONEYGRAM: [],
-        WESTERN_UNION: ["h"]
+        WESTERN_UNION: []
     };
 
     if(options[selectedValue])
@@ -31,6 +31,7 @@ function UpdateTheSecondDropdown()
                 elements[i].textContent = "WU";
             }
         document.getElementById("MontantAchanger").innerHTML = "5,000,000";
+        ResetTable();
     }
     if(selectedValue != "WESTERN_UNION")
     {
@@ -39,8 +40,21 @@ function UpdateTheSecondDropdown()
         {
             elements[i].textContent = "MONEYGRAM";
         }
-        document.getElementById("MontantAchanger").innerHTML = "1,000,000"
+        document.getElementById("MontantAchanger").innerHTML = "1,000,000";
+        ResetTable();
     }
+}
+function ResetTable()
+{
+            document.getElementById("HT-value").innerText = 0;
+            document.getElementById("CD-value").innerText = 0;
+            document.getElementById("TVA-value").innerText = 0;
+            document.getElementById("TTA-value").innerText = 0;
+            document.getElementById("QPBACM-value").innerText = 0;
+            document.getElementById("AccompteQPM-value").innerText = 0;
+            document.getElementById("QPM-value").innerText = 0;
+            document.getElementById("TotalQPM-value").innerText = 0;
+            document.getElementById("result").innerText = "";
 }
 function ReadFormData()
 {
@@ -52,32 +66,26 @@ function ReadFormData()
     formData["Montant"] = parseInt(document.getElementById("Montant").value);
     return formData;
 }
-async function GetHT(amount)
+async function GetHT(amount, operateur, zone)
 {
     return fetch('./data.json')
             .then(res => res.json())
             .then(data => {
-                for(let key in data.RIA.V6CEMAC)
+                for(let key in data[operateur][zone])
                     {
                         var pos = parseInt(key.indexOf("A"));
                         if(amount <= key.slice(pos+1, key.length))
                         {
-                            var HT = parseInt(data.RIA.V6CEMAC[key]);                            
+                            var HT = parseInt(data[operateur][zone][key]);
                             return HT;
                         }
                     }
                     return HT;
             })
 }
-async function GenerateResults()
+
+async function CalculateAndFill(formData, HT)
 {
-    var formData = ReadFormData();
-    if(formData.Operateur == "RIA")
-    {
-        if(formData.Zone == "V6 CEMAC")
-        {    
-            var HT = await GetHT(formData.Montant);
-            console.log(HT);
             var CD = parseInt(Math.round(formData.Montant * 0.0025));
             var TVA = parseInt(Math.round((CD + HT) * 0.1925));
             var TTA = parseInt(Math.round(formData.Montant * 0.002));
@@ -98,7 +106,11 @@ async function GenerateResults()
             document.getElementById("TotalQPM-value").innerText = TotalQPM;
 
             document.getElementById("result").innerText = TotalTTC;
-            }
-        }
-    }
+}
+async function GenerateResults()
+{
+    var formData = ReadFormData();
+    var HT = await GetHT(formData.Montant, formData.Operateur, formData.Zone);
+    CalculateAndFill(formData, HT);
+}
     
