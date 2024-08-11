@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="script2.js"></script>
+    <link rel="stylesheet" href="style.css" type="text/css">
+</head>
+<body>
+    <div class="first-box">
+        <div class="left-form">
+            <form onsubmit="event.preventDefault(); GetTable()">
+                <p>Selectionner la partie a modifier</p>
+                <label for="Operateur">
+                    Operateur: <br>
+                    <select name="Operateur" id="Operateur" onchange="UpdateTheSecondDropdown()">
+                        <option value="" selected>--Please choose an option--</option>
+                        <option value="RIA">RIA</option>
+                        <option value="MONEYGRAM">MONEYGRAM</option>
+                        <option value="WESTERN_UNION">WESTERN_UNION</option>
+                    </select>
+                </label><br>
+                <label for="Zone">
+                    Zone: <br>
+                    <select name="Zone" id="Zone">
+                        <option value="" selected>--Choose--</option>
+                    </select>
+                </label><br><br>
+                <button type="submit">Generation</button>
+            </form>
+        </div>        
+    <table id="JSON-table"></table>
+    <button onclick="event.preventDefault(); SaveData()">Save</button>
+    </div>
+</body>
+</html>
