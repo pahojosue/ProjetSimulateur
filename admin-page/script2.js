@@ -3,7 +3,7 @@ let data;
 async function GetTable(){
     document.getElementById("JSON-table").innerHTML = "";
     var formData = ReadFormData();
-    fetch('./data.json')
+    fetch('https://dataserver.glitch.me/data')
     .then(res =>res.json())
     .then(jsonData =>{
         data = jsonData;
@@ -30,7 +30,7 @@ function displayTable(data, operateur, zone)
     //creating the table header
     var headerRow = table.insertRow();
     var headerCell1 = headerRow.insertCell();
-    headerCell1.innerHTML = "key";
+    headerCell1.innerHTML = "Ranges";
     var headerCell2 = headerRow.insertCell();
     headerCell2.innerHTML = "Value";
 
@@ -58,9 +58,9 @@ function UpdateTheSecondDropdown()
     secondDropdown.innerHTML = "";
 
     var options = {
-        RIA: ["V6CEMAC", "V8UEMOA","GUINEEEQUATORIALE", "TXBENIN", "TWUSETCANADA", "TYFRANCEETBELGIQUE", "VZINTERNATIONAL"],
-        MONEYGRAM: [],
-        WESTERN_UNION: []
+        RIA: ["V6-CEMAC", "V8-UEMOA","GUINEE-EQUATORIALE", "TX-BENIN", "TW-US-ET-CANADA", "TY-FRANCE-ET-BELGIQUE", "VZ-INTERNATIONAL"],
+        MONEYGRAM: ["VY-CANADA-US-UK", "V1-UEMOA", "VM-XAF-COUNTRIES", "VL-ROW", "XZ-NIGERIA", "XY-RDC"],
+        WESTERN_UNION: ["Z4-UEMOA-ET-CEMAC", "Z5-RESTE-AFRIQUE", "Z6-EUROPE-USA-ET-CANADA", "Z7-RESTE_MONDE"]
     };
 
     if(options[selectedValue])
@@ -78,7 +78,7 @@ function UpdateTheSecondDropdown()
 
 function SaveData()
 {
-    fetch('./data.json', {
+    fetch('https://dataserver.glitch.me/data', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'

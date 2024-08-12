@@ -7,9 +7,9 @@ function UpdateTheSecondDropdown()
     secondDropdown.innerHTML = "";
 
     var options = {
-        RIA: ["V6CEMAC", "V8UEMOA","GUINEEEQUATORIALE", "TXBENIN", "TWUSETCANADA", "TYFRANCEETBELGIQUE", "VZINTERNATIONAL"],
-        MONEYGRAM: [],
-        WESTERN_UNION: []
+        RIA: ["V6-CEMAC", "V8-UEMOA","GUINEE-EQUATORIALE", "TX-BENIN", "TW-US-ET-CANADA", "TY-FRANCE-ET-BELGIQUE", "VZ-INTERNATIONAL"],
+        MONEYGRAM: ["VY-CANADA-US-UK", "V1-UEMOA", "VM-XAF-COUNTRIES", "VL-ROW", "XZ-NIGERIA", "XY-RDC"],
+        WESTERN_UNION: ["Z4-UEMOA-ET-CEMAC", "Z5-RESTE-AFRIQUE", "Z6-EUROPE-USA-ET-CANADA", "Z7-RESTE_MONDE"]
     };
 
     if(options[selectedValue])
@@ -68,7 +68,7 @@ function ReadFormData()
 }
 async function GetHT(amount, operateur, zone)
 {
-    return fetch('./data.json')
+    return fetch('https://dataserver.glitch.me/data')
             .then(res => res.json())
             .then(data => {
                 for(let key in data[operateur][zone])
@@ -88,10 +88,10 @@ async function CalculateAndFill(formData, HT)
 {
             var CD = parseInt(Math.round(formData.Montant * 0.0025));
             var TVA = parseInt(Math.round((CD + HT) * 0.1925));
-            var TTA = parseInt(Math.round(formData.Montant * 0.002));
+            var TTA = formData.Operateur == "MONEYGRAM" ? 0 : parseInt(Math.round(formData.Montant * 0.002));
             var QPBACM = parseInt(Math.round(HT * 0.3));
-            var AccompteQPM = parseInt(Math.round(HT * 0.7 * 0.022));
-            var QPM = parseInt(Math.round((HT * 0.7) - AccompteQPM));
+            var AccompteQPM = formData.Operateur == "RIA" ? parseInt(Math.round(HT * 0.7 * 0.022)) : parseInt(Math.round(HT * 0.8 * 0.022));
+            var QPM = formData.Operateur == "RIA" ? parseInt(Math.round((HT * 0.7) - AccompteQPM)) : parseInt(Math.round((HT * 0.8) - AccompteQPM))
             var TotalQPM = parseInt(Math.round(QPM + AccompteQPM));
 
             var TotalTTC = formData.Montant + HT + CD + TVA + TTA;

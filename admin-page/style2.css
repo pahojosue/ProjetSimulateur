@@ -1,0 +1,59 @@
+table
+{
+    width: 550px;
+}
+th
+{
+    background-color: gray;
+}
+table,td,th
+{
+    border-collapse: collapse;
+    border: 1px solid black;
+    text-align: center;
+}
+td[contenteditable="true"]
+{
+    background-color: blue;
+}
+button
+{
+    width: 240px;
+    height: 30px;
+    color: white;
+    background-color: blue;
+    border: 1px;
+    border-radius: 5px;
+}
+body
+{
+    font-family: Calibri;
+    line-height: 1.8;
+}
+.left-form
+{
+    height: 250px;
+    width: 300px;
+    margin-left: 40px;
+    box-shadow: -20px 0 20px 1px rgba(0, 0, 255, 0.1), 20px 0 20px 1px rgba(0, 255, 0, 0.1);
+    border-radius: 20px;
+    margin-top: 100px;
+}
+form
+{
+    padding-left: 20px;
+    width: 250px;
+}
+select
+{
+    height: 30px;
+    width: 240px;
+    text-align: center;
+    border-radius: 40px;
+}
+#SaveButton
+{
+    margin-top: 40px;
+    margin-left: 90px;
+    width: 180px;
+}
