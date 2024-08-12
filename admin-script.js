@@ -1,4 +1,5 @@
 let data;
+let er;
 //first function called
 async function GetTable(){
     document.getElementById("JSON-table").innerHTML = "";
@@ -45,11 +46,29 @@ function displayTable(data, operateur, zone)
         var cell2 = row.insertCell();
         cell2.contentEditable = true;
         cell2.innerHTML = values[index];
-
         cell2.addEventListener('input', () =>{
-            data[operateur][zone][key] = parseInt(cell2.innerHTML);
+            if(checkValidNumber(cell2.innerHTML))
+            {
+                data[operateur][zone][key] = parseInt(cell2.innerHTML);
+            }
+            else{}
         });
+        cell2.addEventListener('keyup', () => {
+            if(!checkValidNumber(cell2.innerHTML))
+                {
+                    er = false;
+                }
+            else
+            {
+                er = true;
+            }
+        })
     });
+}
+function checkValidNumber(input)
+{
+    var number = Number(input);
+    return !isNaN(number); //if the value passed is a real number, isNaN will return false but the ! will make it true
 }
 //third function called
 function UpdateTheSecondDropdown()
@@ -78,11 +97,38 @@ function UpdateTheSecondDropdown()
     });
     }
 }
+function PrintSuccess()
+{
+    printing = document.getElementById("printing");
+    printing.innerHTML = "Data saved successfully";
+    printing.style.backgroundColor = "#76f216";
+    printing.style.width = "520px";
+    printing.style.display = "block";
 
+    setTimeout(() => {
+        printing.style.display = "none";
+    }, 1500);
+}
+function PrintFailure()
+{
+    printing = document.getElementById("printing");
+    printing.innerHTML = "Error Saving Data";
+    printing.style.backgroundColor = "red";
+    printing.style.width = "520px";
+    printing.style.display = "block";
+
+    setTimeout(() => {
+        printing.style.display = "none";
+    }, 1500);
+}
 function SaveData()
 {
     const SaveButton = document.getElementById("SaveButton");
-    if(!SaveButton.disabled){
+    if(er === false)
+    {
+        PrintFailure();
+    }
+    else if(!SaveButton.disabled){
     fetch('https://dataserver.glitch.me/data', {
         method: 'POST',
         headers: {
@@ -93,16 +139,9 @@ function SaveData()
     .then(response => response.json())
     .then(updatedData => {
         console.log("Data saved successfully: ", updatedData);
-        printing = document.getElementById("printing");
-        printing.innerHTML = "Data saved successfully";
-        printing.style.backgroundColor = "#76f216";
-        printing.style.width = "520px";
+        PrintSuccess();
     })
     .catch(error =>{
-        printing = document.createElement("div").style = {
-            backgroundColor : "red",
-        }
-        printing.innerText = "Error saving data";
         console.log("Error saving data ", error);
     });
     }

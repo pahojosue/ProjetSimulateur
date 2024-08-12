@@ -113,21 +113,32 @@ async function GetHT(amount, operateur, zone)
 }
 function PrintErrorMessage()
 {
-    var result = document.getElementById("result");
-    result.innerText = "Entrez un vrai montant";
-    result.style.fontSize = "20px";
+    var result = document.getElementById("error");
+    result.style.display = "block";
+    result.innerText = "La valeur entree n'est pas valide";
     result.style.backgroundColor = "red";
-    result.style.width = "550px";
+    result.style.fontWeight = "bold";
+    result.style.color = "white";
     document.getElementById("Montant").value = "";
+
+    setTimeout(() =>{
+        result.style.display = "none";
+    }, 3000);
 }
 function printNumberInRange()
 {
-    var result = document.getElementById("result");
+    var result = document.getElementById("error");
+    result.style.display = "block";
     result.innerText = "Entrez un monant dans l'intervale";
-    result.style.fontSize = "20px";
     result.style.backgroundColor = "red";
-    result.style.width = "550px";
+    result.style.backgroundColor = "red";
+    result.style.fontWeight = "bold";
+    result.style.color = "white";
     document.getElementById("Montant").value = "";
+
+    setTimeout(() =>{
+        result.style.display = "none";
+    }, 3000);
 }
 async function CalculateAndFill(formData, HT)
 {
@@ -151,14 +162,16 @@ async function CalculateAndFill(formData, HT)
             document.getElementById("TotalQPM-value").innerText = TotalQPM;
 
             var result = document.getElementById("result");
-            result.innerText =`Montant Total A Payer: ${TotalTTC.toLocaleString('fr-FR',{
+            result.innerText =`Montant A Payer(TTC): ${TotalTTC.toLocaleString('fr-FR',{
                 style: 'currency',
-                currency: 'XFA',
+                currency: 'XAF',
                 maximumFractionDigits: 0,
             })}`;
             result.style.fontSize = "20px";
-            result.style.backgroundColor = "green";
+            result.style.backgroundColor = "#61d30d";
             result.style.width = "550px";
+            result.style.fontWeight = "bold";
+            result.style.color = "white";
 }
 function checkValidNumber(input)
 {

@@ -9,10 +9,16 @@ table,td,th
     border-collapse: collapse;
     border: 1px solid black;
     text-align: center;
+    height: 1px;
 }
 td[contenteditable="true"]
 {
     border: 2px solid black;
+    height: 3px;
+}
+td
+{
+    width: 3px;
 }
 button
 {
