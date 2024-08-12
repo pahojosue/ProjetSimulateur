@@ -8,7 +8,8 @@
     <link rel="stylesheet" href="./admin-style.css" type="text/css">
 </head>
 <body>
-    <a href="./index.html" style="text-decoration: none; color: white;"><div style="background-color: blue; border-radius: 40px; width: 140px; border: 1px solid black; text-align: center; box-shadow: 2px 2px black inset">Back to Calculating</div></a>
+    <a href="./index.html" style="text-decoration: none; color: white;"><div style="background-color: blue; border-radius: 40px; width: 200px; border: 1px solid black; text-align: center; box-shadow: 2px 2px black inset">Retour a la simulation</div></a>
+    <div id="printing" style="text-align: center; margin-left: 390px; border-radius: 30px"></div>
     <div class="first-box">
         <div class="left-form">
             <form onsubmit="event.preventDefault(); GetTable()">
@@ -28,7 +29,7 @@
                         <option value="" selected>--Choose--</option>
                     </select>
                 </label><br><br>
-                <button type="submit">Generation</button>
+                <button type="submit">Generation du tableau de modification</button>
             </form>
         </div>        
     <table id="JSON-table"></table>

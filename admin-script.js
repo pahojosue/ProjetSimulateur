@@ -32,8 +32,10 @@ function displayTable(data, operateur, zone)
     var headerRow = table.insertRow();
     var headerCell1 = headerRow.insertCell();
     headerCell1.innerHTML = "Ranges";
+    headerCell1.style.backgroundColor = "gray";
     var headerCell2 = headerRow.insertCell();
     headerCell2.innerHTML = "Value";
+    headerCell2.style.backgroundColor = "gray";
 
     //creating table rows
     keys.forEach((key, index) => {
@@ -91,9 +93,17 @@ function SaveData()
     .then(response => response.json())
     .then(updatedData => {
         console.log("Data saved successfully: ", updatedData);
+        printing = document.getElementById("printing");
+        printing.innerHTML = "Data saved successfully";
+        printing.style.backgroundColor = "#76f216";
+        printing.style.width = "520px";
     })
-    .catch(error =>
-        console.error('Error saving data: ', error)
-    );
+    .catch(error =>{
+        printing = document.createElement("div").style = {
+            backgroundColor : "red",
+        }
+        printing.innerText = "Error saving data";
+        console.log("Error saving data ", error);
+    });
     }
 }

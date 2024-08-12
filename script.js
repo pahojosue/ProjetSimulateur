@@ -55,6 +55,7 @@ function ResetTable()
             document.getElementById("QPM-value").innerText = 0;
             document.getElementById("TotalQPM-value").innerText = 0;
             document.getElementById("result").innerText = "";
+            document.getElementById("Montant").value = "";
 }
 function ReadFormData()
 {
@@ -68,7 +69,28 @@ function ReadFormData()
 }
 async function GetHT(amount, operateur, zone)
 {
-    return fetch('https://dataserver.glitch.me/data')
+    console.log(operateur, typeof(operateur),amount);
+    console.log(amount >=0 && amount <= 1_000_000);
+    if((operateur === "RIA" ||  operateur === "MONEYGRAM") && (amount >=0 && amount <= 1_000_000))
+    {
+            return fetch('https://dataserver.glitch.me/data')
+            .then(res => res.json())
+            .then(data => {
+                for(let key in data[operateur][zone])
+                    {
+                        var pos = parseInt(key.indexOf("A"));
+                        if(amount <= key.slice(pos+1, key.length))
+                        {
+                            var HT = parseInt(data[operateur][zone][key]);
+                            return HT;
+                        }
+                    }
+                    return HT;
+            });
+    }
+    else if((operateur === "WESTERN_UNION") && (amount >=0 && amount <= 5_000_000))
+    {
+            return fetch('https://dataserver.glitch.me/data')
             .then(res => res.json())
             .then(data => {
                 for(let key in data[operateur][zone])
@@ -82,8 +104,31 @@ async function GetHT(amount, operateur, zone)
                     }
                     return HT;
             })
+    }
+    else
+    {
+        printNumberInRange();
+        return 0;
+    }
 }
-
+function PrintErrorMessage()
+{
+    var result = document.getElementById("result");
+    result.innerText = "Entrez un vrai montant";
+    result.style.fontSize = "20px";
+    result.style.backgroundColor = "red";
+    result.style.width = "550px";
+    document.getElementById("Montant").value = "";
+}
+function printNumberInRange()
+{
+    var result = document.getElementById("result");
+    result.innerText = "Entrez un monant dans l'intervale";
+    result.style.fontSize = "20px";
+    result.style.backgroundColor = "red";
+    result.style.width = "550px";
+    document.getElementById("Montant").value = "";
+}
 async function CalculateAndFill(formData, HT)
 {
             var CD = parseInt(Math.round(formData.Montant * 0.0025));
@@ -105,12 +150,33 @@ async function CalculateAndFill(formData, HT)
             document.getElementById("QPM-value").innerText = QPM;
             document.getElementById("TotalQPM-value").innerText = TotalQPM;
 
-            document.getElementById("result").innerText = TotalTTC;
+            var result = document.getElementById("result");
+            result.innerText =`Montant Total A Payer: ${TotalTTC.toLocaleString('fr-FR',{
+                style: 'currency',
+                currency: 'XFA',
+                maximumFractionDigits: 0,
+            })}`;
+            result.style.fontSize = "20px";
+            result.style.backgroundColor = "green";
+            result.style.width = "550px";
+}
+function checkValidNumber(input)
+{
+    var number = Number(input);
+    return !isNaN(number); //if the value passed is a real number, isNaN will return false but the ! will make it true
 }
 async function GenerateResults()
 {
-    var formData = ReadFormData();
-    var HT = await GetHT(formData.Montant, formData.Operateur, formData.Zone);
-    CalculateAndFill(formData, HT);
+    if(checkValidNumber(document.getElementById("Montant").value)){
+        var formData = ReadFormData();
+        var HT = await GetHT(formData.Montant, formData.Operateur, formData.Zone);
+        if(HT != 0)
+        {
+            CalculateAndFill(formData, HT);
+        }
+    }
+    else
+    {
+        PrintErrorMessage();
+    }
 }
-    

@@ -2,10 +2,7 @@ table
 {
     width: 550px;
     margin-left: 40px;
-}
-th
-{
-    background-color: gray;
+    border-radius: 2px;
 }
 table,td,th
 {
@@ -15,7 +12,7 @@ table,td,th
 }
 td[contenteditable="true"]
 {
-    background-color: blue;
+    border: 2px solid black;
 }
 button
 {
