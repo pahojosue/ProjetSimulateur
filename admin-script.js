@@ -8,6 +8,7 @@ async function GetTable(){
     .then(jsonData =>{
         data = jsonData;
         displayTable(data, formData.Operateur, formData.Zone);
+        document.getElementById("SaveButton").disabled = false;
     })
 }
 //second function called
@@ -78,6 +79,8 @@ function UpdateTheSecondDropdown()
 
 function SaveData()
 {
+    const SaveButton = document.getElementById("SaveButton");
+    if(!SaveButton.disabled){
     fetch('https://dataserver.glitch.me/data', {
         method: 'POST',
         headers: {
@@ -92,4 +95,5 @@ function SaveData()
     .catch(error =>
         console.error('Error saving data: ', error)
     );
+    }
 }
