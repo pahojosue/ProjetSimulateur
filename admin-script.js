@@ -136,7 +136,6 @@ function TestData()
 function SaveData()
 {
     var count = TestData();
-    console.log(count);
     const SaveButton = document.getElementById("SaveButton");
     if(count != 0)
     {
