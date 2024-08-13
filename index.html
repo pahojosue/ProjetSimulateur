@@ -5,68 +5,69 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css" type="text/css">
     <script src="script.js"></script>
-    <title>Test</title>
+    <title>Calculs des Commissions</title>
 </head>
 <body>
-        <h1 style="color: rgb(61, 176, 61); text-align:center;">Banque Atlantique Cameroun</h1>
-        <a href="./admin-index.html" style="text-decoration: none; color: white;"><div style="background-color: blue; border-radius: 7px; width: 80px; border: 1px solid black; text-align: center; margin-left: 1040px; box-shadow: 2px 2px black inset">Admin Page</div></a>
+    <h1 style="color: rgb(61, 176, 61); text-align:center;">Banque Atlantique Cameroun</h1>
+    <a href="./admin-index.html" style="text-decoration: none; color: white;"><div style="background-color: blue; border-radius: 7px; width: 80px; border: 1px solid black; text-align: center; margin-left: 1040px; box-shadow: 2px 2px black inset">Admin Page</div></a>
     <div class="first-box">
-    <div class="left-form">
-    <form onsubmit="event.preventDefault();GenerateResults()">
-        <p>Simulateur de repartition de Comission</p>
-        <label for="Operateur">
-            Operateur: <br>
-            <select name="Operateur" id="Operateur" onchange="UpdateTheSecondDropdown()">
-                <option value="">--Please choose an option--</option>
-                <option value="RIA">RIA</option>
-                <option value="MONEYGRAM">MONEYGRAM</option>
-                <option value="WESTERN_UNION">WESTERN_UNION</option>
-            </select>
-        </label><br>
-        <label for="Zone">
-            Zone: <br>
-            <select name="Zone" id="Zone">
-                <option value="" selected>--Choose--</option>
-            </select>
-        </label><br><br>
-        <label for="Montant">
-            Montant de transaction (min 0 max <span id="MontantAchanger"></span>):<br>
-            <input type="text" placeholder="" id="Montant" disabled>
-        </label><br><br>
-        <button type="submit">Calculer</button>
-        <div id="error" style="text-align: center; margin-top: 5px"></div>
-    </form>
+        <div class="left-form">
+            <form onsubmit="event.preventDefault();GenerateResults()">
+                <p>Simulateur de repartition des Commissions</p>
+                <label for="Operateur">
+                    Operateur: <br>
+                    <select name="Operateur" id="Operateur" onchange="UpdateTheSecondDropdown()">
+                        <option value="">--Please choose an option--</option>
+                        <option value="RIA">RIA</option>
+                        <option value="MONEYGRAM">MONEYGRAM</option>
+                        <option value="WESTERN_UNION">WESTERN_UNION</option>
+                    </select>
+                </label><br>
+                <label for="Zone">
+                    Zone: <br>
+                    <select name="Zone" id="Zone">
+                        <option value="" selected>--Choose--</option>
+                    </select>
+                </label><br><br>
+                <label for="Montant">
+                    Montant de transaction (min 0 max <span id="MontantAchanger"></span>):<br>
+                    <input type="text" placeholder="" id="Montant" disabled>
+                </label><br><br>
+                <button type="submit">Calculer</button>
+                <div id="error" style="text-align: center; margin-top: 5px"></div>
+            </form>
+            <div id="loader" style="visibility: hidden;"></div>
+        </div>
+        <div class="second-box">
+            <table id="output-table">
+                <p style="text-align: center;" id="result"></p>
+                <p>Resultat de repartition de comission: </p>
+                <tr>
+                    <th id="WesternUnionPart">HT</th>
+                    <th>Comission d'envoi</th>
+                    <th>TVA</th>
+                    <th id="TTA-tochange">TTA</th>
+                </tr>
+                <tr>
+                    <td id="HT-value">0</td>
+                    <td id="CD-value">0</td>
+                    <td id="TVA-value">0</td>
+                    <td id="TTA-value">0</td>
+                </tr>
+                <tr>
+                    <th>QUOTE-PART BACM</th>
+                    <th>ACCOMPTE SUR QUOTE-PART <span class="nomMoneygram"></span></th>
+                    <th>QUOTE-PART <span class="nomMoneygram"></span></th>
+                    <th>TOTAL QUOTE-PART <span class="nomMoneygram"></span></th>
+                </tr>
+                <tr>
+                    <td id="QPBACM-value">0</td>
+                    <td id="AccompteQPM-value">0</td>
+                    <td id="QPM-value">0</td>
+                    <td id="TotalQPM-value">0</td>
+                </tr>
+            </table>
+        </div>
     </div>
-    <div class="second-box">
-    <table id="output-table">
-        <p style="text-align: center;" id="result"></p>
-        <p>Resultat de repartition de comission: </p>
-        <tr>
-            <th>HT</th>
-            <th>Comission d'envoi</th>
-            <th>TVA</th>
-            <th id="TTA-tochange">TTA</th>
-        </tr>
-        <tr>
-            <td id="HT-value">0</td>
-            <td id="CD-value">0</td>
-            <td id="TVA-value">0</td>
-            <td id="TTA-value">0</td>
-        </tr>
-        <tr>
-            <th>QUOTE-PART BACM</th>
-            <th>ACCOMPTE SUR QUOTE-PART <span class="nomMoneygram"></span></th>
-            <th>QUOTE-PART <span class="nomMoneygram"></span></th>
-            <th>TOTAL QUOTE-PART <span class="nomMoneygram"></span></th>
-        </tr>
-        <tr>
-            <td id="QPBACM-value">0</td>
-            <td id="AccompteQPM-value">0</td>
-            <td id="QPM-value">0</td>
-            <td id="TotalQPM-value">0</td>
-        </tr>
-    </table>
-</div>
-</div>
 </body>
 </html>

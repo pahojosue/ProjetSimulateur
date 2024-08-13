@@ -9,11 +9,11 @@ input:disabled
 }
 .left-form
 {
-    height: 400px;
+    height: 470px;
     width: 300px;
     margin-left: 40px;
     box-shadow: -20px 0 20px 1px rgba(0, 0, 255, 0.1), 20px 0 20px 1px rgba(0, 255, 0, 0.1);
-    border-radius: 20px;
+    border-radius: 3%;
 }
 form
 {
@@ -57,7 +57,7 @@ button
     width: 600px;
     height: 350px;
     margin-top: 50px;
-    border-radius: 20px;
+    border-radius: 2%;
 }
 table
 {
@@ -76,4 +76,21 @@ table,td,th
 td[contenteditable="true"]
 {
     background-color: blue;
+}
+
+#loader
+{
+    border: 8px solid gray;
+    border-top: 8px solid blue;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    margin-left: 110px;
+
+    animation: spin 0.5s linear infinite;
+}
+
+@keyframes spin {
+    0% {transform: rotate(0deg);}
+    100% {transform: rotate(360deg);}
 }

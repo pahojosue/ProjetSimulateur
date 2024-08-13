@@ -36,11 +36,11 @@ body
 }
 .left-form
 {
-    height: 250px;
+    height: 350px;
     width: 300px;
     margin-left: 40px;
     box-shadow: -20px 0 20px 1px rgba(0, 0, 255, 0.1), 20px 0 20px 1px rgba(0, 255, 0, 0.1);
-    border-radius: 20px;
+    border-radius: 3%;
     margin-top: 100px;
 }
 form

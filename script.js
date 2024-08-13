@@ -11,6 +11,7 @@ function UpdateTheSecondDropdown()
     var options = {
         RIA: ["V6-CEMAC", "V8-UEMOA","GUINEE-EQUATORIALE", "TX-BENIN", "TW-US-ET-CANADA", "TY-FRANCE-ET-BELGIQUE", "VZ-INTERNATIONAL"],
         MONEYGRAM: ["VY-CANADA-US-UK", "V1-UEMOA", "VM-XAF-COUNTRIES", "VL-ROW", "XZ-NIGERIA", "XY-RDC"],
+        WESTERN_UNION: ["Z4-UEMOA-ET-CEMAC", "Z5-RESTE-AFRIQUE", "Z6-EUROPE-USA-ET-CANADA", "Z7-RESTE_MONDE"]
     };
 
     if(options[selectedValue])//if the selected value is one of the options: RIA, etc
@@ -34,6 +35,7 @@ function UpdateTheSecondDropdown()
         document.getElementById("MontantAchanger").innerHTML = "5,000,000";
         ResetTable();
         input.disabled = false;
+        document.getElementById("WesternUnionPart").innerHTML = "Actual Fee";
     }
     if(selectedValue == "")
     {
@@ -51,7 +53,15 @@ function UpdateTheSecondDropdown()
         document.getElementById("MontantAchanger").innerHTML = "1,000,000";
         ResetTable();
         input.disabled = false;
+        document.getElementById("WesternUnionPart").innerHTML = "HT";
     }
+    if(selectedValue == "MONEYGRAM")
+    {
+        document.getElementById("WesternUnionPart").innerHTML = "Actual Fee";
+    }
+    document.getElementById("Zone").addEventListener('change', () =>{
+        ResetTable();
+    })
 }
 function ResetTable()
 {
@@ -80,8 +90,6 @@ async function GetHT(amount, operateur, zone)
 {
     console.log(operateur, typeof(operateur),amount);
     console.log(amount >=0 && amount <= 1_000_000);
-    if(operateur === "RIA" ||  operateur === "MONEYGRAM")
-    {
         if(amount >=0 && amount <= 1_000_000){
             return fetch('./data.json')
             .then(res => res.json())
@@ -103,31 +111,6 @@ async function GetHT(amount, operateur, zone)
             printNumberInRange(1_000_000);
             return 0;
         }
-    }
-    else if(operateur === "WESTERN_UNION")
-    {
-        if(amount >=0 && amount <= 5_000_000){
-            return fetch('./data.json')
-            .then(res => res.json())
-            .then(data => {
-                for(let key in data[operateur][zone])
-                    {
-                        var pos = parseInt(key.indexOf("A"));
-                        if(amount <= key.slice(pos+1, key.length))
-                        {
-                            var HT = parseInt(data[operateur][zone][key]);
-                            return HT;
-                        }
-                    }
-                    return HT;
-            });
-        }
-        else
-        {
-            printNumberInRange(5_000_000);
-            return 0;
-        }
-    }
 }
 function PrintErrorMessage()
 {
@@ -164,10 +147,14 @@ function printNumberInRange(max)
 }
 async function CalculateAndFill(formData, HT)
 {
+    document.getElementById("loader").style.visibility = "visible";
+    setTimeout(() =>{
+        document.getElementById("loader").style.visibility = "hidden";
+    }, 200);
     var CD = parseInt(Math.round(formData.Montant * 0.0025));
     var TVA = parseInt(Math.round((CD + HT) * 0.1925));
     var TTA = formData.Operateur == "MONEYGRAM" ? 0 : parseInt(Math.round(formData.Montant * 0.002));
-    var QPBACM = parseInt(Math.round(HT * 0.3));
+    var QPBACM = formData.Operateur == "RIA" ? parseInt(Math.round(HT * 0.3)) : parseInt(Math.round(HT * 0.2));
     var AccompteQPM = formData.Operateur == "RIA" ? parseInt(Math.round(HT * 0.7 * 0.022)) : parseInt(Math.round(HT * 0.8 * 0.022));
     var QPM = formData.Operateur == "RIA" ? parseInt(Math.round((HT * 0.7) - AccompteQPM)) : parseInt(Math.round((HT * 0.8) - AccompteQPM))
     var TotalQPM = parseInt(Math.round(QPM + AccompteQPM));
@@ -206,25 +193,32 @@ async function GenerateResults()
         var formData = ReadFormData();
         if(formData.Operateur == "WESTERN_UNION")
         {
-            if(formData.Zone == "Z4-UEMOA-ET-CEMAC")
+            if(formData.Montant >=0 && formData.Montant <=5_000_000)
             {
-                var HT = parseInt(formData.Montant) >= 500_000 ? parseInt(24000) : parseInt(formData.Montant * 0.03);
-                CalculateAndFill(formData, HT);
+                if(formData.Zone == "Z4-UEMOA-ET-CEMAC")
+                {
+                    var HT = parseInt(formData.Montant) >= 500_000 ? parseInt(24000) : parseInt(formData.Montant * 0.03);
+                    CalculateAndFill(formData, HT);
+                }
+                else if(formData.Zone == "Z5-RESTE-AFRIQUE")
+                {
+                    var HT = parseInt(formData.Montant) >= 500_000 ? parseInt(30000) : parseInt(formData.Montant * 0.03);
+                    CalculateAndFill(formData, HT);
+                }
+                else if(formData.Zone == "Z6-EUROPE-USA-ET-CANADA")
+                {
+                    var HT = parseInt(formData.Montant) >= 500_000 ? parseInt(18000) : parseInt(formData.Montant * 0.02);
+                    CalculateAndFill(formData, HT);
+                }
+                else if(formData.Zone == "Z7-RESTE_MONDE")
+                {
+                    var HT = parseInt(formData.Montant) >= 500_000 ? parseInt(35000) : parseInt(formData.Montant * 0.04);
+                    CalculateAndFill(formData, HT);
+                }
             }
-            else if(formData.Zone == "Z5-RESTE-AFRIQUE")
+            else
             {
-                var HT = parseInt(formData.Montant) >= 500_000 ? parseInt(30000) : parseInt(formData.Montant * 0.03);
-                CalculateAndFill(formData, HT);
-            }
-            else if(formData.Zone == "Z6-EUROPE-USA-ET-CANADA")
-            {
-                var HT = parseInt(formData.Montant) >= 500_000 ? parseInt(18000) : parseInt(formData.Montant * 0.02);
-                CalculateAndFill(formData, HT);
-            }
-            else if(formData.Zone == "Z7-RESTE_MONDE")
-            {
-                var HT = parseInt(formData.Montant) >= 500_000 ? parseInt(35000) : parseInt(formData.Montant * 0.04);
-                CalculateAndFill(formData, HT);
+                printNumberInRange(5_000_000);
             }
         }
         else{
