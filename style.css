@@ -3,6 +3,10 @@ body
     font-family: Calibri;
     line-height: 1.8;
 }
+input:disabled
+{
+    background-color: rgb(184, 177, 177);
+}
 .left-form
 {
     height: 400px;

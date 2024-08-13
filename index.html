@@ -17,7 +17,7 @@
         <label for="Operateur">
             Operateur: <br>
             <select name="Operateur" id="Operateur" onchange="UpdateTheSecondDropdown()">
-                <option value="" selected>--Please choose an option--</option>
+                <option value="">--Please choose an option--</option>
                 <option value="RIA">RIA</option>
                 <option value="MONEYGRAM">MONEYGRAM</option>
                 <option value="WESTERN_UNION">WESTERN_UNION</option>
@@ -31,7 +31,7 @@
         </label><br><br>
         <label for="Montant">
             Montant de transaction (min 0 max <span id="MontantAchanger"></span>):<br>
-            <input type="text" placeholder="" id="Montant">
+            <input type="text" placeholder="" id="Montant" disabled>
         </label><br><br>
         <button type="submit">Calculer</button>
         <div id="error" style="text-align: center; margin-top: 5px"></div>

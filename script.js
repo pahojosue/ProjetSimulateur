@@ -2,6 +2,7 @@ function UpdateTheSecondDropdown()
 {
     var firstDropdown = document.getElementById("Operateur");
     var secondDropdown = document.getElementById("Zone");
+    var input = document.getElementById("Montant");
 
     var selectedValue = firstDropdown.value;
     secondDropdown.innerHTML = "";
@@ -32,8 +33,15 @@ function UpdateTheSecondDropdown()
             }
         document.getElementById("MontantAchanger").innerHTML = "5,000,000";
         ResetTable();
+        input.disabled = false;
     }
-    if(selectedValue != "WESTERN_UNION")
+    if(selectedValue == "")
+    {
+        input.disabled = true;
+        ResetTable();
+        document.getElementById("MontantAchanger").innerHTML = "";
+    }
+    if(selectedValue != "WESTERN_UNION" && selectedValue != "")
     {
         var elements = document.getElementsByClassName("nomMoneygram");
         for(var i = 0; i < elements.length; i++)
@@ -42,6 +50,7 @@ function UpdateTheSecondDropdown()
         }
         document.getElementById("MontantAchanger").innerHTML = "1,000,000";
         ResetTable();
+        input.disabled = false;
     }
 }
 function ResetTable()
@@ -73,7 +82,7 @@ async function GetHT(amount, operateur, zone)
     console.log(amount >=0 && amount <= 1_000_000);
     if((operateur === "RIA" ||  operateur === "MONEYGRAM") && (amount >=0 && amount <= 1_000_000))
     {
-            return fetch('https://dataserver.glitch.me/data')
+            return fetch('./data.json')
             .then(res => res.json())
             .then(data => {
                 for(let key in data[operateur][zone])
@@ -90,7 +99,7 @@ async function GetHT(amount, operateur, zone)
     }
     else if((operateur === "WESTERN_UNION") && (amount >=0 && amount <= 5_000_000))
     {
-            return fetch('https://dataserver.glitch.me/data')
+            return fetch('./data.json')
             .then(res => res.json())
             .then(data => {
                 for(let key in data[operateur][zone])

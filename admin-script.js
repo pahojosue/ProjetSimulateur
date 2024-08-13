@@ -4,7 +4,7 @@ let er;
 async function GetTable(){
     document.getElementById("JSON-table").innerHTML = "";
     var formData = ReadFormData();
-    fetch('https://dataserver.glitch.me/data')
+    fetch('http://localhost:3000/data')
     .then(res =>res.json())
     .then(jsonData =>{
         data = jsonData;
@@ -32,29 +32,38 @@ function displayTable(data, operateur, zone)
     //creating the table header
     var headerRow = table.insertRow();
     var headerCell1 = headerRow.insertCell();
-    headerCell1.innerHTML = "Ranges";
+    headerCell1.innerHTML = "De";
     headerCell1.style.backgroundColor = "gray";
     var headerCell2 = headerRow.insertCell();
-    headerCell2.innerHTML = "Value";
+    headerCell2.innerHTML = "A";
     headerCell2.style.backgroundColor = "gray";
+    var headerCell3 = headerRow.insertCell();
+    headerCell3.innerHTML = "valeur";
+    headerCell3.style.backgroundColor = "gray";
 
     //creating table rows
     keys.forEach((key, index) => {
         var row = table.insertRow();
+
+        var posDe = parseInt(key.indexOf("e"));
+        var posA = parseInt(key.indexOf("A"));
+
         var cell1 = row.insertCell();
-        cell1.innerHTML = key;
+        cell1.innerHTML = key.slice(posDe+1, posA);
         var cell2 = row.insertCell();
-        cell2.contentEditable = true;
-        cell2.innerHTML = values[index];
-        cell2.addEventListener('input', () =>{
-            if(checkValidNumber(cell2.innerHTML))
+        cell2.innerHTML = (key.slice(posA+1, key.length));
+        var cell3 = row.insertCell();
+        cell3.contentEditable = true;
+        cell3.innerHTML = values[index];
+        cell3.addEventListener('input', () =>{
+            if(checkValidNumber(cell3.innerHTML))
             {
-                data[operateur][zone][key] = parseInt(cell2.innerHTML);
+                data[operateur][zone][key] = parseInt(cell3.innerHTML);
             }
             else{}
         });
-        cell2.addEventListener('keyup', () => {
-            if(!checkValidNumber(cell2.innerHTML))
+        cell3.addEventListener('keyup', () => {
+            if(!checkValidNumber(cell3.innerHTML))
                 {
                     er = false;
                 }
@@ -129,7 +138,7 @@ function SaveData()
         PrintFailure();
     }
     else if(!SaveButton.disabled){
-    fetch('https://dataserver.glitch.me/data', {
+    fetch('http://localhost:3000/data', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
