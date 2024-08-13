@@ -80,8 +80,9 @@ async function GetHT(amount, operateur, zone)
 {
     console.log(operateur, typeof(operateur),amount);
     console.log(amount >=0 && amount <= 1_000_000);
-    if((operateur === "RIA" ||  operateur === "MONEYGRAM") && (amount >=0 && amount <= 1_000_000))
+    if(operateur === "RIA" ||  operateur === "MONEYGRAM")
     {
+        if(amount >=0 && amount <= 1_000_000){
             return fetch('./data.json')
             .then(res => res.json())
             .then(data => {
@@ -96,9 +97,16 @@ async function GetHT(amount, operateur, zone)
                     }
                     return HT;
             });
+        }
+        else
+        {
+            printNumberInRange(1_000_000);
+            return 0;
+        }
     }
-    else if((operateur === "WESTERN_UNION") && (amount >=0 && amount <= 5_000_000))
+    else if(operateur === "WESTERN_UNION")
     {
+        if(amount >=0 && amount <= 5_000_000){
             return fetch('./data.json')
             .then(res => res.json())
             .then(data => {
@@ -112,12 +120,13 @@ async function GetHT(amount, operateur, zone)
                         }
                     }
                     return HT;
-            })
-    }
-    else
-    {
-        printNumberInRange();
-        return 0;
+            });
+        }
+        else
+        {
+            printNumberInRange(5_000_000);
+            return 0;
+        }
     }
 }
 function PrintErrorMessage()
@@ -134,11 +143,15 @@ function PrintErrorMessage()
         result.style.display = "none";
     }, 3000);
 }
-function printNumberInRange()
+function printNumberInRange(max)
 {
     var result = document.getElementById("error");
     result.style.display = "block";
-    result.innerText = "Entrez un monant dans l'intervale";
+    result.innerText = `Entrez un monant dans l'intervale 0 a ${max.toLocaleString('fr-FR',{
+                style: 'currency',
+                currency: 'XAF',
+                maximumFractionDigits: 0,
+            })}`;
     result.style.backgroundColor = "red";
     result.style.backgroundColor = "red";
     result.style.fontWeight = "bold";
