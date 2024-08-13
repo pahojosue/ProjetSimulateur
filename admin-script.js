@@ -56,22 +56,8 @@ function displayTable(data, operateur, zone)
         cell3.contentEditable = true;
         cell3.innerHTML = values[index];
         cell3.addEventListener('input', () =>{
-            if(checkValidNumber(cell3.innerHTML))
-            {
-                data[operateur][zone][key] = parseInt(cell3.innerHTML);
-            }
-            else{}
+                data[operateur][zone][key] = cell3.innerHTML;
         });
-        cell3.addEventListener('keyup', () => {
-            if(!checkValidNumber(cell3.innerHTML))
-                {
-                    er = false;
-                }
-            else
-            {
-                er = true;
-            }
-        })
     });
 }
 function checkValidNumber(input)
@@ -130,10 +116,29 @@ function PrintFailure()
         printing.style.display = "none";
     }, 1500);
 }
+function TestData()
+{
+    var count = 0;
+    var formData = ReadFormData();
+    for(let value in data[formData.Operateur][formData.Zone])
+    {
+        if((!checkValidNumber(data[formData.Operateur][formData.Zone][value])) || (parseInt(data[formData.Operateur][formData.Zone][value]) < 0))
+        {
+            count ++;
+        }
+        else
+        {
+            data[formData.Operateur][formData.Zone][value] = parseInt(data[formData.Operateur][formData.Zone][value]);
+        }
+    }
+    return count;
+}
 function SaveData()
 {
+    var count = TestData();
+    console.log(count);
     const SaveButton = document.getElementById("SaveButton");
-    if(er === false)
+    if(count != 0)
     {
         PrintFailure();
     }
