@@ -86,39 +86,36 @@ function ReadFormData()
     formData["Montant"] = parseInt(document.getElementById("Montant").value);
     return formData;
 }
-var goBackAgain = true;
 async function GetHT(amount, operateur, zone)
 {
         if(amount >=0 && amount <= 1_000_000){
             return fetch('./data.json')
             .then(res => res.json())
             .then(data => {
-                console.log(data[operateur][zone].length);
-                for(let key in data[operateur][zone])
+                const entries = Object.entries(data[operateur][zone]);
+                for(let i = 0; i < entries.length; i++)
+                {
+                    var pos = parseInt(entries[i][0].indexOf("A"));
+                    if(amount <= entries[i][0].slice(pos+1, entries[i][0].length))
                     {
-                        var pos = parseInt(key.indexOf("A"));
-                        if(amount <= key.slice(pos+1, key.length))
+                        var HT = parseInt(entries[i][1]);
+                        var CD = parseInt(Math.round(amount * 0.0025));
+                        var TVA = parseInt(Math.round((CD + HT) * 0.1925));
+                        var TTA = operateur == "MONEYGRAM" ? 0 : parseInt(Math.round(amount * 0.002));
+                        var TTC = amount - (HT + CD + TVA + TTA);
+                        if(TTC < parseInt(entries[i][0].slice(parseInt(entries[i][0].indexOf("e") + 1), pos)))
                         {
-                            var HT = parseInt(data[operateur][zone][key]);
-                            var CD = parseInt(Math.round(amount * 0.0025));
-                            var TVA = parseInt(Math.round((CD + HT) * 0.1925));
-                            var TTA = operateur == "MONEYGRAM" ? 0 : parseInt(Math.round(amount * 0.002));
-                            var TTC = amount - (HT + CD + TVA + TTA);
-                            console.log(goBackAgain);
-                            console.log(key.slice(parseInt(key.indexOf("e") + 1), pos))
-                            if((TTC < key.slice(parseInt(key.indexOf("e") + 1), pos)) && goBackAgain)
-                            {
-                                GetHT(TTC, operateur, zone);
-                                goBackAgain = false;
-                                console.log(goBackAgain);
-                            }
-                            else{
-                                console.log(goBackAgain);
-                                return HT;
-                            }
+                            console.log(parseInt(entries[i][0].slice(parseInt(entries[i][0].indexOf("e") + 1), pos)));
+                            HT = parseInt(entries[i-1][1]);
+                            break;
+                        }
+                        else
+                        {
+                            return HT;
                         }
                     }
-                    return HT;
+                }
+                return HT;
             });
         }
         else
