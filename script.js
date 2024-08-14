@@ -88,8 +88,6 @@ function ReadFormData()
 }
 async function GetHT(amount, operateur, zone)
 {
-    console.log(operateur, typeof(operateur),amount);
-    console.log(amount >=0 && amount <= 1_000_000);
         if(amount >=0 && amount <= 1_000_000){
             return fetch('./data.json')
             .then(res => res.json())
@@ -108,15 +106,15 @@ async function GetHT(amount, operateur, zone)
         }
         else
         {
-            printNumberInRange(1_000_000);
+            printErrorInRange(1_000_000);
             return 0;
         }
 }
-function PrintErrorMessage()
+function printErrorInValue()
 {
     var result = document.getElementById("error");
     result.style.display = "block";
-    result.innerText = "La valeur entree n'est pas valide";
+    result.innerText = "La valeur entrée n'est pas valide";
     result.style.backgroundColor = "red";
     result.style.fontWeight = "bold";
     result.style.color = "white";
@@ -126,11 +124,11 @@ function PrintErrorMessage()
         result.style.display = "none";
     }, 3000);
 }
-function printNumberInRange(max)
+function printErrorInRange(max)
 {
     var result = document.getElementById("error");
     result.style.display = "block";
-    result.innerText = `Entrez un monant dans l'intervale 0 a ${max.toLocaleString('fr-FR',{
+    result.innerText = `Le montant de la transaction doit être dans l'intervale 0 à ${max.toLocaleString('fr-FR',{
                 style: 'currency',
                 currency: 'XAF',
                 maximumFractionDigits: 0,
@@ -145,7 +143,21 @@ function printNumberInRange(max)
         result.style.display = "none";
     }, 3000);
 }
-async function CalculateAndFill(formData, HT)
+function printErrorInValue()
+{
+    var result = document.getElementById("error");
+    result.style.display = "block";
+    result.innerText = "Veuillez sélectionner une option";
+    result.style.backgroundColor = "red";
+    result.style.backgroundColor = "red";
+    result.style.fontWeight = "bold";
+    result.style.color = "white";
+
+    setTimeout(() => {
+        result.style.display = "none";
+    }, 3000);
+}
+async function CalculateValuesFillTable(formData, HT)
 {
     document.getElementById("loader").style.visibility = "visible";
     setTimeout(() =>{
@@ -171,7 +183,7 @@ async function CalculateAndFill(formData, HT)
     document.getElementById("TotalQPM-value").innerText = TotalQPM;
 
     var result = document.getElementById("result");
-    result.innerText =`Montant A Payer(TTC): ${TotalTTC.toLocaleString('fr-FR',{
+    result.innerText =`Montant À Payer (TTC) : ${TotalTTC.toLocaleString('fr-FR',{
         style: 'currency',
         currency: 'XAF',
         maximumFractionDigits: 0,
@@ -182,14 +194,18 @@ async function CalculateAndFill(formData, HT)
     result.style.fontWeight = "bold";
     result.style.color = "white";
 }
-function checkValidNumber(input)
+function checkNumberIsValid(input)
 {
     var number = Number(input);
     return !isNaN(number); //if the value passed is a real number, isNaN will return false but the ! will make it true
 }
 async function GenerateResults()
 {
-    if(checkValidNumber(document.getElementById("Montant").value)){
+    if(document.getElementById("Montant").disabled == true)
+    {
+        printErrorInValue();
+    }
+    else if(checkNumberIsValid(document.getElementById("Montant").value)){
         var formData = ReadFormData();
         if(formData.Operateur == "WESTERN_UNION")
         {
@@ -198,39 +214,39 @@ async function GenerateResults()
                 if(formData.Zone == "Z4-UEMOA-ET-CEMAC")
                 {
                     var HT = parseInt(formData.Montant) >= 500_000 ? parseInt(24000) : parseInt(formData.Montant * 0.03);
-                    CalculateAndFill(formData, HT);
+                    CalculateValuesFillTable(formData, HT);
                 }
                 else if(formData.Zone == "Z5-RESTE-AFRIQUE")
                 {
                     var HT = parseInt(formData.Montant) >= 500_000 ? parseInt(30000) : parseInt(formData.Montant * 0.03);
-                    CalculateAndFill(formData, HT);
+                    CalculateValuesFillTable(formData, HT);
                 }
                 else if(formData.Zone == "Z6-EUROPE-USA-ET-CANADA")
                 {
                     var HT = parseInt(formData.Montant) >= 500_000 ? parseInt(18000) : parseInt(formData.Montant * 0.02);
-                    CalculateAndFill(formData, HT);
+                    CalculateValuesFillTable(formData, HT);
                 }
                 else if(formData.Zone == "Z7-RESTE_MONDE")
                 {
                     var HT = parseInt(formData.Montant) >= 500_000 ? parseInt(35000) : parseInt(formData.Montant * 0.04);
-                    CalculateAndFill(formData, HT);
+                    CalculateValuesFillTable(formData, HT);
                 }
             }
             else
             {
-                printNumberInRange(5_000_000);
+                printErrorInRange(5_000_000);
             }
         }
         else{
             var HT = await GetHT(formData.Montant, formData.Operateur, formData.Zone);
             if(HT != 0)
             {
-                CalculateAndFill(formData, HT);
+                CalculateValuesFillTable(formData, HT);
             }
         }
     }
     else
     {
-        PrintErrorMessage();
+        printErrorInValue();
     }
 }

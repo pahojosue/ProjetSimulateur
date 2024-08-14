@@ -13,11 +13,11 @@
     <div class="first-box">
         <div class="left-form">
             <form onsubmit="event.preventDefault(); GetTable()">
-                <p>Veuillez selectionner l'element a modifier</p>
+                <p>Veuillez s&#xe9;lectionner l'&#xe9;l&#xe9;ment &#xe0; modifier</p>
                 <label for="Operateur">
-                    Operateur: <br>
+                    Op&#xe9;rateur: <br>
                     <select name="Operateur" id="Operateur" onchange="UpdateTheSecondDropdown()">
-                        <option value="" selected>--Please choose an option--</option>
+                        <option value="" selected>--Veuillez choisir une option--</option>
                         <option value="RIA">RIA</option>
                         <option value="MONEYGRAM">MONEYGRAM</option>
                         <option value="WESTERN_UNION">WESTERN_UNION</option>
@@ -26,10 +26,11 @@
                 <label for="Zone">
                     Zone: <br>
                     <select name="Zone" id="Zone">
-                        <option value="" selected>--Choose--</option>
+                        <option value="" selected>--Choisissez--</option>
                     </select>
                 </label><br><br>
                 <button type="submit">Afficher la Configuration</button>
+                <div id="loader" style="visibility: hidden;"></div>
             </form>
         </div>        
     <table id="JSON-table"></table>

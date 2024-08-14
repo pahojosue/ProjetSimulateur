@@ -2,6 +2,10 @@ let data;
 let er;
 //first function called
 async function GetTable(){
+    document.getElementById("loader").style.visibility = "visible";
+    setTimeout(() =>{
+        document.getElementById("loader").style.visibility = "hidden";
+    }, 200);
     document.getElementById("JSON-table").innerHTML = "";
     var formData = ReadFormData();
     fetch('http://localhost:3000/data')
@@ -33,13 +37,19 @@ function displayTable(data, operateur, zone)
     var headerRow = table.insertRow();
     var headerCell1 = headerRow.insertCell();
     headerCell1.innerHTML = "De";
-    headerCell1.style.backgroundColor = "gray";
+    headerCell1.style.backgroundColor = "blue";
+    headerCell1.style.color = "white";
+    headerCell1.style.fontWeight = "bold";
     var headerCell2 = headerRow.insertCell();
-    headerCell2.innerHTML = "A";
-    headerCell2.style.backgroundColor = "gray";
+    headerCell2.innerHTML = "&Agrave;";
+    headerCell2.style.backgroundColor = "blue";
+    headerCell2.style.color = "white";
+    headerCell2.style.fontWeight = "bold";
     var headerCell3 = headerRow.insertCell();
     headerCell3.innerHTML = "valeur";
-    headerCell3.style.backgroundColor = "gray";
+    headerCell3.style.backgroundColor = "blue";
+    headerCell3.style.color = "white";
+    headerCell3.style.fontWeight = "bold";
 
     //creating table rows
     keys.forEach((key, index) => {
@@ -51,7 +61,7 @@ function displayTable(data, operateur, zone)
         var cell1 = row.insertCell();
         cell1.innerHTML = key.slice(posDe+1, posA);
         var cell2 = row.insertCell();
-        cell2.innerHTML = (key.slice(posA+1, key.length));
+        cell2.innerText = key.slice(posA+1, key.length);
         var cell3 = row.insertCell();
         cell3.contentEditable = true;
         cell3.innerHTML = values[index];

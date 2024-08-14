@@ -9,9 +9,9 @@ input:disabled
 }
 .left-form
 {
-    height: 455px;
+    height: 500px;
     width: 300px;
-    margin-left: 40px;
+    margin-left: 10px;
     box-shadow: -20px 0 20px 1px rgba(0, 0, 255, 0.1), 20px 0 20px 1px rgba(0, 255, 0, 0.1);
     border-radius: 3%;
 }

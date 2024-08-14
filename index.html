@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css" type="text/css">
+    <link rel="icon" href="./pay.png" type="image/icon">
     <script src="script.js"></script>
     <title>Calculs des Commissions</title>
 </head>
@@ -14,11 +15,11 @@
     <div class="first-box">
         <div class="left-form">
             <form onsubmit="event.preventDefault();GenerateResults()">
-                <p>Simulateur de repartition des Commissions</p>
+                <p>Simulateur de r&eacute;partition des commissions</p>
                 <label for="Operateur">
-                    Operateur: <br>
+                    Op&eacute;rateur: <br>
                     <select name="Operateur" id="Operateur" onchange="UpdateTheSecondDropdown()">
-                        <option value="">--Please choose an option--</option>
+                        <option value="">--Veuillez choisir une option--</option>
                         <option value="RIA">RIA</option>
                         <option value="MONEYGRAM">MONEYGRAM</option>
                         <option value="WESTERN_UNION">WESTERN_UNION</option>
@@ -27,7 +28,7 @@
                 <label for="Zone">
                     Zone: <br>
                     <select name="Zone" id="Zone">
-                        <option value="" selected>--Choose--</option>
+                        <option value="" selected>--Choisissez--</option>
                     </select>
                 </label><br><br>
                 <label for="Montant">

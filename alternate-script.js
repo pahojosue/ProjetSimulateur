@@ -86,21 +86,36 @@ function ReadFormData()
     formData["Montant"] = parseInt(document.getElementById("Montant").value);
     return formData;
 }
+var goBackAgain = true;
 async function GetHT(amount, operateur, zone)
 {
-    console.log(operateur, typeof(operateur),amount);
-    console.log(amount >=0 && amount <= 1_000_000);
         if(amount >=0 && amount <= 1_000_000){
             return fetch('./data.json')
             .then(res => res.json())
             .then(data => {
+                console.log(data[operateur][zone].length);
                 for(let key in data[operateur][zone])
                     {
                         var pos = parseInt(key.indexOf("A"));
                         if(amount <= key.slice(pos+1, key.length))
                         {
                             var HT = parseInt(data[operateur][zone][key]);
-                            return HT;
+                            var CD = parseInt(Math.round(amount * 0.0025));
+                            var TVA = parseInt(Math.round((CD + HT) * 0.1925));
+                            var TTA = operateur == "MONEYGRAM" ? 0 : parseInt(Math.round(amount * 0.002));
+                            var TTC = amount - (HT + CD + TVA + TTA);
+                            console.log(goBackAgain);
+                            console.log(key.slice(parseInt(key.indexOf("e") + 1), pos))
+                            if((TTC < key.slice(parseInt(key.indexOf("e") + 1), pos)) && goBackAgain)
+                            {
+                                GetHT(TTC, operateur, zone);
+                                goBackAgain = false;
+                                console.log(goBackAgain);
+                            }
+                            else{
+                                console.log(goBackAgain);
+                                return HT;
+                            }
                         }
                     }
                     return HT;
