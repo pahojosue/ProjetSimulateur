@@ -123,6 +123,7 @@ function printErrorInValue()
     setTimeout(() =>{
         result.style.display = "none";
     }, 3000);
+    ResetTable();
 }
 function printErrorInRange(max)
 {
@@ -142,6 +143,7 @@ function printErrorInRange(max)
     setTimeout(() =>{
         result.style.display = "none";
     }, 3000);
+    ResetTable();
 }
 function printErrorInValue()
 {
@@ -156,6 +158,7 @@ function printErrorInValue()
     setTimeout(() => {
         result.style.display = "none";
     }, 3000);
+    ResetTable();
 }
 async function CalculateValuesFillTable(formData, HT)
 {
@@ -164,7 +167,7 @@ async function CalculateValuesFillTable(formData, HT)
         document.getElementById("loader").style.visibility = "hidden";
     }, 200);
     var CD = parseInt(Math.round(formData.Montant * 0.0025));
-    var TVA = parseInt(Math.round((CD + HT) * 0.1925));
+    var TVA = parseInt(Math.round(((formData.Montant * 0.0025) + HT) * 0.1925));
     var TTA = formData.Operateur == "MONEYGRAM" ? 0 : parseInt(Math.round(formData.Montant * 0.002));
     var QPBACM = formData.Operateur == "RIA" ? parseInt(Math.round(HT * 0.3)) : parseInt(Math.round(HT * 0.2));
     var AccompteQPM = formData.Operateur == "RIA" ? parseInt(Math.round(HT * 0.7 * 0.022)) : parseInt(Math.round(HT * 0.8 * 0.022));
@@ -213,22 +216,22 @@ async function GenerateResults()
             {
                 if(formData.Zone == "Z4-UEMOA-ET-CEMAC")
                 {
-                    var HT = parseInt(formData.Montant) >= 500_000 ? parseInt(24000) : parseInt(formData.Montant * 0.03);
+                    var HT = parseInt(formData.Montant) > 500_000 ? parseInt(24000) : parseInt(formData.Montant * 0.03);
                     CalculateValuesFillTable(formData, HT);
                 }
                 else if(formData.Zone == "Z5-RESTE-AFRIQUE")
                 {
-                    var HT = parseInt(formData.Montant) >= 500_000 ? parseInt(30000) : parseInt(formData.Montant * 0.03);
+                    var HT = parseInt(formData.Montant) > 500_000 ? parseInt(30000) : parseInt(formData.Montant * 0.03);
                     CalculateValuesFillTable(formData, HT);
                 }
                 else if(formData.Zone == "Z6-EUROPE-USA-ET-CANADA")
                 {
-                    var HT = parseInt(formData.Montant) >= 500_000 ? parseInt(18000) : parseInt(formData.Montant * 0.02);
+                    var HT = parseInt(formData.Montant) > 500_000 ? parseInt(18000) : parseInt(formData.Montant * 0.02);
                     CalculateValuesFillTable(formData, HT);
                 }
                 else if(formData.Zone == "Z7-RESTE_MONDE")
                 {
-                    var HT = parseInt(formData.Montant) >= 500_000 ? parseInt(35000) : parseInt(formData.Montant * 0.04);
+                    var HT = parseInt(formData.Montant) > 500_000 ? parseInt(35000) : parseInt(formData.Montant * 0.04);
                     CalculateValuesFillTable(formData, HT);
                 }
             }
