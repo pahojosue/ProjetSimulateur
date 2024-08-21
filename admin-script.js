@@ -36,12 +36,12 @@ function displayTable(data, operateur, zone)
     //creating the table header
     var headerRow = table.insertRow();
     var headerCell1 = headerRow.insertCell();
-    headerCell1.innerHTML = "De";
+    headerCell1.innerHTML = "De (FCFA)";
     headerCell1.style.backgroundColor = "blue";
     headerCell1.style.color = "white";
     headerCell1.style.fontWeight = "bold";
     var headerCell2 = headerRow.insertCell();
-    headerCell2.innerHTML = "&Agrave;";
+    headerCell2.innerHTML = "&Agrave; (FCFA)";
     headerCell2.style.backgroundColor = "blue";
     headerCell2.style.color = "white";
     headerCell2.style.fontWeight = "bold";
@@ -59,9 +59,13 @@ function displayTable(data, operateur, zone)
         var posA = parseInt(key.indexOf("A"));
 
         var cell1 = row.insertCell();
-        cell1.innerHTML = key.slice(posDe+1, posA);
+        cell1.style.backgroundColor = "#aeb6bf";
+        c1 = parseInt(key.slice(posDe+1, posA));
+        cell1.innerText = c1.toLocaleString('fr-FR', {maximumFractionDigits: 0})
         var cell2 = row.insertCell();
-        cell2.innerText = key.slice(posA+1, key.length);
+        cell2.style.backgroundColor = "#aeb6bf";
+        c2 = parseInt(key.slice(posA+1, key.length));
+        cell2.innerText = c2.toLocaleString('fr-FR', {maximumFractionDigits: 0})
         var cell3 = row.insertCell();
         cell3.contentEditable = true;
         cell3.innerHTML = values[index];
@@ -87,6 +91,7 @@ function UpdateTheSecondDropdown()
     var options = {
         RIA: ["V6-CEMAC", "V8-UEMOA","GUINEE-EQUATORIALE", "TX-BENIN", "TW-US-ET-CANADA", "TY-FRANCE-ET-BELGIQUE", "VZ-INTERNATIONAL"],
         MONEYGRAM: ["VY-CANADA-US-UK", "V1-UEMOA", "VM-XAF-COUNTRIES", "VL-ROW", "XZ-NIGERIA", "XY-RDC"],
+        WESTERN_UNION: ["Z4-UEMOA-ET-CEMAC", "Z5-RESTE-AFRIQUE", "Z6-EUROPE-USA-ET-CANADA", "Z7-RESTE_MONDE"]
     };
 
     if(options[selectedValue])

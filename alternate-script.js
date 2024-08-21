@@ -83,13 +83,14 @@ function ReadFormData()
     var Zone = document.getElementById("Zone");
     formData["Operateur"] = Operateur.options[Operateur.selectedIndex].text;
     formData["Zone"] = Zone.options[Zone.selectedIndex].text;
-    formData["Montant"] = parseInt(document.getElementById("Montant").value);
+    formData["Montant"] = document.getElementById("Montant").value;
+    formData["Montant"] = parseInt(formData["Montant"].replaceAll(" ", ""));    
     return formData;
 }
 async function GetHT(amount, operateur, zone)
 {
         if(amount >=0 && amount <= 1_000_000){
-            return fetch('./data.json')
+            return fetch('http://localhost:3000/data')
             .then(res => res.json())
             .then(data => {
                 const entries = Object.entries(data[operateur][zone]);
@@ -99,15 +100,19 @@ async function GetHT(amount, operateur, zone)
                     if(amount <= entries[i][0].slice(pos+1, entries[i][0].length))
                     {
                         var HT = parseInt(entries[i][1]);
-                        var CD = parseInt(Math.round(amount * 0.0025));
-                        var TVA = parseInt(Math.round((CD + HT) * 0.1925));
-                        var TTA = operateur == "MONEYGRAM" ? 0 : parseInt(Math.round(amount * 0.002));
-                        var TTC = amount - (HT + CD + TVA + TTA);
-                        if(TTC < parseInt(entries[i][0].slice(parseInt(entries[i][0].indexOf("e") + 1), pos)))
-                        {
-                            console.log(parseInt(entries[i][0].slice(parseInt(entries[i][0].indexOf("e") + 1), pos)));
-                            HT = parseInt(entries[i-1][1]);
-                            break;
+                        // var TTC = Math.round((amount - (HT * (1 + 0.1925))) / (1 + 0.0025 + (0.0025 * 0.1925) + 0.002));
+                        var TTC = Math.round((amount - (HT * 1.1925)) / 1.00498125);
+                        if(i!=0){
+                            if(TTC < parseInt(entries[i][0].slice(parseInt(entries[i][0].indexOf("e") + 1), pos)))
+                            {
+                                console.log(parseInt(entries[i][0].slice(parseInt(entries[i][0].indexOf("e") + 1), pos)));
+                                HT = parseInt(entries[i-1][1]);
+                                break;
+                            }
+                            else
+                            {
+                                return HT;
+                            }
                         }
                         else
                         {
@@ -142,7 +147,12 @@ function printNumberInRange(max)
 {
     var result = document.getElementById("error");
     result.style.display = "block";
-    result.innerText = `Entrez un monant dans l'intervale 0 a ${max.toLocaleString('fr-FR',{
+    var min = 1125;
+    result.innerText = `Entrez un monant dans l'intervale ${min.toLocaleString('fr-FR', {
+        style: 'currency',
+        currency: 'XAF',
+        maximumFractionDigits: 0,
+    })} a ${max.toLocaleString('fr-FR',{
                 style: 'currency',
                 currency: 'XAF',
                 maximumFractionDigits: 0,
@@ -163,36 +173,41 @@ async function CalculateAndFill(formData, HT)
     setTimeout(() =>{
         document.getElementById("loader").style.visibility = "hidden";
     }, 200);
-    var CD = parseInt(Math.round(formData.Montant * 0.0025));
-    var TVA = parseInt(Math.round((CD + HT) * 0.1925));
-    var TTA = formData.Operateur == "MONEYGRAM" ? 0 : parseInt(Math.round(formData.Montant * 0.002));
+    var TotalTTC = Math.round((formData.Montant - (HT * (1.1925))) / 1.00498125);
+    var CD = parseInt(Math.round(TotalTTC * 0.0025));
+    var TVA = Math.round(((TotalTTC * 0.0025) + HT) * 0.1925);
+    var TTA = formData.Operateur == "MONEYGRAM" ? 0 : parseInt(Math.round(TotalTTC * 0.002));
     var QPBACM = formData.Operateur == "RIA" ? parseInt(Math.round(HT * 0.3)) : parseInt(Math.round(HT * 0.2));
     var AccompteQPM = formData.Operateur == "RIA" ? parseInt(Math.round(HT * 0.7 * 0.022)) : parseInt(Math.round(HT * 0.8 * 0.022));
     var QPM = formData.Operateur == "RIA" ? parseInt(Math.round((HT * 0.7) - AccompteQPM)) : parseInt(Math.round((HT * 0.8) - AccompteQPM))
     var TotalQPM = parseInt(Math.round(QPM + AccompteQPM));
 
-    var TotalTTC = formData.Montant - ( HT + CD + TVA + TTA);
+    if(TotalTTC >= 0){
+        document.getElementById("HT-value").innerText = HT;
+        document.getElementById("CD-value").innerText = CD;
+        document.getElementById("TVA-value").innerText = TVA;
+        document.getElementById("TTA-value").innerText = TTA;
+        document.getElementById("QPBACM-value").innerText = QPBACM;
+        document.getElementById("AccompteQPM-value").innerText = AccompteQPM;
+        document.getElementById("QPM-value").innerText = QPM;
+        document.getElementById("TotalQPM-value").innerText = TotalQPM;
 
-    document.getElementById("HT-value").innerText = HT;
-    document.getElementById("CD-value").innerText = CD;
-    document.getElementById("TVA-value").innerText = TVA;
-    document.getElementById("TTA-value").innerText = TTA;
-    document.getElementById("QPBACM-value").innerText = QPBACM;
-    document.getElementById("AccompteQPM-value").innerText = AccompteQPM;
-    document.getElementById("QPM-value").innerText = QPM;
-    document.getElementById("TotalQPM-value").innerText = TotalQPM;
-
-    var result = document.getElementById("result");
-    result.innerText =`Montant Recus(TTC): ${TotalTTC.toLocaleString('fr-FR',{
-        style: 'currency',
-        currency: 'XAF',
-        maximumFractionDigits: 0,
-    })}`;
-    result.style.fontSize = "20px";
-    result.style.backgroundColor = "#61d30d";
-    result.style.width = "550px";
-    result.style.fontWeight = "bold";
-    result.style.color = "white";
+        var result = document.getElementById("result");
+        result.innerText =`Montant A Recevoir (TTC): ${TotalTTC.toLocaleString('fr-FR',{
+            style: 'currency',
+            currency: 'XAF',
+            maximumFractionDigits: 0,
+        })}`;
+        result.style.fontSize = "20px";
+        result.style.backgroundColor = "#61d30d";
+        result.style.width = "550px";
+        result.style.fontWeight = "bold";
+        result.style.color = "white";
+    }
+    else
+    {
+        printNumberInRange(1_000_000);
+    }
 }
 function checkValidNumber(input)
 {
@@ -201,45 +216,32 @@ function checkValidNumber(input)
 }
 async function GenerateResults()
 {
-    if(checkValidNumber(document.getElementById("Montant").value)){
-        var formData = ReadFormData();
-        if(formData.Operateur == "WESTERN_UNION")
-        {
-            if(formData.Montant >=0 && formData.Montant <=5_000_000)
+    if(checkValidNumber(document.getElementById("Montant").value.replaceAll(" ", "")))
+    {
+            var formData = ReadFormData();
+            if(formData.Operateur == "WESTERN_UNION")
             {
-                if(formData.Zone == "Z4-UEMOA-ET-CEMAC")
+                if(formData.Montant > 5_000_000)
                 {
-                    var HT = parseInt(formData.Montant) >= 500_000 ? parseInt(24000) : parseInt(formData.Montant * 0.03);
-                    CalculateAndFill(formData, HT);
+                    printNumberInRange(5_000_000);
                 }
-                else if(formData.Zone == "Z5-RESTE-AFRIQUE")
+                else
                 {
-                    var HT = parseInt(formData.Montant) >= 500_000 ? parseInt(30000) : parseInt(formData.Montant * 0.03);
-                    CalculateAndFill(formData, HT);
-                }
-                else if(formData.Zone == "Z6-EUROPE-USA-ET-CANADA")
-                {
-                    var HT = parseInt(formData.Montant) >= 500_000 ? parseInt(18000) : parseInt(formData.Montant * 0.02);
-                    CalculateAndFill(formData, HT);
-                }
-                else if(formData.Zone == "Z7-RESTE_MONDE")
-                {
-                    var HT = parseInt(formData.Montant) >= 500_000 ? parseInt(35000) : parseInt(formData.Montant * 0.04);
-                    CalculateAndFill(formData, HT);
+                    var HT = await GetHT(formData.Montant, formData.Operateur, formData.Zone);
+                    if(HT != 0)
+                    {
+                        CalculateAndFill(formData, HT);
+                    }
                 }
             }
             else
             {
-                printNumberInRange(5_000_000);
+                    var HT = await GetHT(formData.Montant, formData.Operateur, formData.Zone);
+                    if(HT != 0)
+                    {
+                        CalculateAndFill(formData, HT);
+                    }
             }
-        }
-        else{
-            var HT = await GetHT(formData.Montant, formData.Operateur, formData.Zone);
-            if(HT != 0)
-            {
-                CalculateAndFill(formData, HT);
-            }
-        }
     }
     else
     {

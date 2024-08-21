@@ -83,13 +83,14 @@ function ReadFormData()
     var Zone = document.getElementById("Zone");
     formData["Operateur"] = Operateur.options[Operateur.selectedIndex].text;
     formData["Zone"] = Zone.options[Zone.selectedIndex].text;
-    formData["Montant"] = parseInt(document.getElementById("Montant").value);
+    formData["Montant"] = document.getElementById("Montant").value;
+    formData["Montant"] = parseInt(formData["Montant"].replaceAll(" ", ""));
     return formData;
 }
 async function GetHT(amount, operateur, zone)
 {
         if(amount >=0 && amount <= 1_000_000){
-            return fetch('./data.json')
+            return fetch('http://localhost:3000/data')
             .then(res => res.json())
             .then(data => {
                 for(let key in data[operateur][zone])
@@ -208,45 +209,31 @@ async function GenerateResults()
     {
         printErrorInValue();
     }
-    else if(checkNumberIsValid(document.getElementById("Montant").value)){
+    else if(checkNumberIsValid(document.getElementById("Montant").value.replaceAll(" ", ""))){
         var formData = ReadFormData();
         if(formData.Operateur == "WESTERN_UNION")
-        {
-            if(formData.Montant >=0 && formData.Montant <=5_000_000)
             {
-                if(formData.Zone == "Z4-UEMOA-ET-CEMAC")
+                if(formData.Montant > 5_000_000)
                 {
-                    var HT = parseInt(formData.Montant) > 500_000 ? parseInt(24000) : parseInt(formData.Montant * 0.03);
-                    CalculateValuesFillTable(formData, HT);
+                    printNumberInRange(5_000_000);
                 }
-                else if(formData.Zone == "Z5-RESTE-AFRIQUE")
+                else
                 {
-                    var HT = parseInt(formData.Montant) > 500_000 ? parseInt(30000) : parseInt(formData.Montant * 0.03);
-                    CalculateValuesFillTable(formData, HT);
-                }
-                else if(formData.Zone == "Z6-EUROPE-USA-ET-CANADA")
-                {
-                    var HT = parseInt(formData.Montant) > 500_000 ? parseInt(18000) : parseInt(formData.Montant * 0.02);
-                    CalculateValuesFillTable(formData, HT);
-                }
-                else if(formData.Zone == "Z7-RESTE_MONDE")
-                {
-                    var HT = parseInt(formData.Montant) > 500_000 ? parseInt(35000) : parseInt(formData.Montant * 0.04);
-                    CalculateValuesFillTable(formData, HT);
+                    var HT = await GetHT(formData.Montant, formData.Operateur, formData.Zone);
+                    if(HT != 0)
+                    {
+                        CalculateValuesFillTable(formData, HT);
+                    }
                 }
             }
             else
             {
-                printErrorInRange(5_000_000);
+                    var HT = await GetHT(formData.Montant, formData.Operateur, formData.Zone);
+                    if(HT != 0)
+                    {
+                        CalculateValuesFillTable(formData, HT);
+                    }
             }
-        }
-        else{
-            var HT = await GetHT(formData.Montant, formData.Operateur, formData.Zone);
-            if(HT != 0)
-            {
-                CalculateValuesFillTable(formData, HT);
-            }
-        }
     }
     else
     {
