@@ -84,7 +84,7 @@ function ReadFormData()
     formData["Operateur"] = Operateur.options[Operateur.selectedIndex].text;
     formData["Zone"] = Zone.options[Zone.selectedIndex].text;
     formData["Montant"] = document.getElementById("Montant").value;
-    formData["Montant"] = parseInt(formData["Montant"].replaceAll(" ", ""));
+    formData["Montant"] = parseInt(formData["Montant"].replaceAll(" ", "").replaceAll(",", ""));
     return formData;
 }
 async function GetHT(amount, operateur, zone)
@@ -209,7 +209,7 @@ async function GenerateResults()
     {
         printErrorInValue();
     }
-    else if(checkNumberIsValid(document.getElementById("Montant").value.replaceAll(" ", ""))){
+    else if(checkNumberIsValid(document.getElementById("Montant").value.replaceAll(" ", "").replaceAll(",", ""))){
         var formData = ReadFormData();
         if(formData.Operateur == "WESTERN_UNION")
             {

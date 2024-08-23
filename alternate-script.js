@@ -84,7 +84,7 @@ function ReadFormData()
     formData["Operateur"] = Operateur.options[Operateur.selectedIndex].text;
     formData["Zone"] = Zone.options[Zone.selectedIndex].text;
     formData["Montant"] = document.getElementById("Montant").value;
-    formData["Montant"] = parseInt(formData["Montant"].replaceAll(" ", ""));    
+    formData["Montant"] = parseInt(formData["Montant"].replaceAll(" ", "").replaceAll(",", ""));
     return formData;
 }
 async function GetHT(amount, operateur, zone)
@@ -105,7 +105,6 @@ async function GetHT(amount, operateur, zone)
                         if(i!=0){
                             if(TTC < parseInt(entries[i][0].slice(parseInt(entries[i][0].indexOf("e") + 1), pos)))
                             {
-                                console.log(parseInt(entries[i][0].slice(parseInt(entries[i][0].indexOf("e") + 1), pos)));
                                 HT = parseInt(entries[i-1][1]);
                                 break;
                             }
@@ -173,7 +172,8 @@ async function CalculateAndFill(formData, HT)
     setTimeout(() =>{
         document.getElementById("loader").style.visibility = "hidden";
     }, 200);
-    var TotalTTC = Math.round((formData.Montant - (HT * (1.1925))) / 1.00498125);
+    var TotalTTC = parseInt(Math.round((formData.Montant - (HT * (1.1925)))) / 1.00498125);
+    console.log(TotalTTC);
     var CD = parseInt(Math.round(TotalTTC * 0.0025));
     var TVA = Math.round(((TotalTTC * 0.0025) + HT) * 0.1925);
     var TTA = formData.Operateur == "MONEYGRAM" ? 0 : parseInt(Math.round(TotalTTC * 0.002));
@@ -181,7 +181,7 @@ async function CalculateAndFill(formData, HT)
     var AccompteQPM = formData.Operateur == "RIA" ? parseInt(Math.round(HT * 0.7 * 0.022)) : parseInt(Math.round(HT * 0.8 * 0.022));
     var QPM = formData.Operateur == "RIA" ? parseInt(Math.round((HT * 0.7) - AccompteQPM)) : parseInt(Math.round((HT * 0.8) - AccompteQPM))
     var TotalQPM = parseInt(Math.round(QPM + AccompteQPM));
-
+    var TotalTTC = formData.Montant - (CD + TVA + TTA + HT);
     if(TotalTTC >= 0){
         document.getElementById("HT-value").innerText = HT;
         document.getElementById("CD-value").innerText = CD;
@@ -216,7 +216,7 @@ function checkValidNumber(input)
 }
 async function GenerateResults()
 {
-    if(checkValidNumber(document.getElementById("Montant").value.replaceAll(" ", "")))
+    if(checkValidNumber(document.getElementById("Montant").value.replaceAll(" ", "").replaceAll(",", "")))
     {
             var formData = ReadFormData();
             if(formData.Operateur == "WESTERN_UNION")

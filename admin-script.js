@@ -1,5 +1,7 @@
 let data;
 let er;
+let Operator;
+let Place;
 //first function called
 async function GetTable(){
     document.getElementById("loader").style.visibility = "visible";
@@ -7,13 +9,19 @@ async function GetTable(){
         document.getElementById("loader").style.visibility = "hidden";
     }, 200);
     document.getElementById("JSON-table").innerHTML = "";
+    document.getElementById("JSON-table2").innerHTML= "";
+    document.getElementById("Intervales").innerHTML = "";
     var formData = ReadFormData();
+    Operator = formData.Operateur;
+    Place = formData.Zone;
     fetch('http://localhost:3000/data')
     .then(res =>res.json())
     .then(jsonData =>{
         data = jsonData;
         displayTable(data, formData.Operateur, formData.Zone);
-        document.getElementById("SaveButton").disabled = false;
+        document.getElementById("toggler").style.visibility = "visible";
+        UpdatingTable(data);
+        UpValue();
     })
 }
 //second function called
@@ -30,9 +38,9 @@ function ReadFormData()
 function displayTable(data, operateur, zone)
 {
     var table = document.getElementById("JSON-table");
+    var table2 = document.getElementById("JSON-table2");
     var keys = Object.keys(data[operateur][zone]);
     var values = Object.values(data[operateur][zone]);
-
     //creating the table header
     var headerRow = table.insertRow();
     var headerCell1 = headerRow.insertCell();
@@ -50,28 +58,70 @@ function displayTable(data, operateur, zone)
     headerCell3.style.backgroundColor = "blue";
     headerCell3.style.color = "white";
     headerCell3.style.fontWeight = "bold";
+    //
+    var headerRow = table2.insertRow();
+    var headerCell1 = headerRow.insertCell();
+    headerCell1.innerHTML = "De (FCFA)";
+    headerCell1.style.backgroundColor = "blue";
+    headerCell1.style.color = "white";
+    headerCell1.style.fontWeight = "bold";
+    var headerCell2 = headerRow.insertCell();
+    headerCell2.innerHTML = "&Agrave; (FCFA)";
+    headerCell2.style.backgroundColor = "blue";
+    headerCell2.style.color = "white";
+    headerCell2.style.fontWeight = "bold";
+    var headerCell3 = headerRow.insertCell();
+    headerCell3.innerHTML = "valeur";
+    headerCell3.style.backgroundColor = "blue";
+    headerCell3.style.color = "white";
+    headerCell3.style.fontWeight = "bold";
+    document.getElementById("JSON-table2").style.visibility = "hidden";
 
+    var count = 0;
     //creating table rows
     keys.forEach((key, index) => {
-        var row = table.insertRow();
+        if(count < (parseInt(keys.length)/2))
+        {
+            var row = table.insertRow();
 
-        var posDe = parseInt(key.indexOf("e"));
-        var posA = parseInt(key.indexOf("A"));
+            var posDe = parseInt(key.indexOf("e"));
+            var posA = parseInt(key.indexOf("A"));
 
-        var cell1 = row.insertCell();
-        cell1.style.backgroundColor = "#aeb6bf";
-        c1 = parseInt(key.slice(posDe+1, posA));
-        cell1.innerText = c1.toLocaleString('fr-FR', {maximumFractionDigits: 0})
-        var cell2 = row.insertCell();
-        cell2.style.backgroundColor = "#aeb6bf";
-        c2 = parseInt(key.slice(posA+1, key.length));
-        cell2.innerText = c2.toLocaleString('fr-FR', {maximumFractionDigits: 0})
-        var cell3 = row.insertCell();
-        cell3.contentEditable = true;
-        cell3.innerHTML = values[index];
-        cell3.addEventListener('input', () =>{
-                data[operateur][zone][key] = cell3.innerHTML;
-        });
+            var cell1 = row.insertCell();
+            cell1.style.backgroundColor = "#aeb6bf";
+            c1 = parseInt(key.slice(posDe+1, posA));
+            cell1.innerText = c1.toLocaleString('fr-FR', {maximumFractionDigits: 0})
+            var cell2 = row.insertCell();
+            cell2.style.backgroundColor = "#aeb6bf";
+            c2 = parseInt(key.slice(posA+1, key.length));
+            cell2.innerText = c2.toLocaleString('fr-FR', {maximumFractionDigits: 0})
+            var cell3 = row.insertCell();
+            cell3.innerHTML = values[index];
+            cell3.style.backgroundColor = "#aeb6bf";
+            count++;
+        }
+        else
+        {
+            document.getElementById("JSON-table2").style.visibility = "visible";
+            var row2 = table2.insertRow();
+
+            var posDe = parseInt(key.indexOf("e"));
+            var posA = parseInt(key.indexOf("A"));
+
+            var cell4 = row2.insertCell();
+            cell4.style.backgroundColor = "#aeb6bf";
+            c4 = parseInt(key.slice(posDe+1, posA));
+            cell4.innerText = c4.toLocaleString('fr-FR', {maximumFractionDigits: 0})
+            var cell5 = row2.insertCell();
+            cell5.style.backgroundColor = "#aeb6bf";
+            c5 = parseInt(key.slice(posA+1, key.length));
+            cell5.innerText = c5.toLocaleString('fr-FR', {maximumFractionDigits: 0})
+            var cell6 = row2.insertCell();
+            cell6.style.backgroundColor = "#aeb6bf";
+            cell6.innerHTML = values[index];
+            count++;
+        }
+        
     });
 }
 function checkValidNumber(input)
@@ -167,9 +217,47 @@ function SaveData()
     .then(updatedData => {
         console.log("Data saved successfully: ", updatedData);
         PrintSuccess();
+        GetTable();
     })
     .catch(error =>{
         console.log("Error saving data ", error);
     });
     }
+}
+function togglePopup() {
+    const overlay = document.getElementById('popupOverlay');
+    overlay.classList.toggle('show');
+}
+
+function UpdatingTable(data)
+{
+    var keys = Object.keys(data[Operator][Place]);
+    keys.forEach((key) => {
+        var posDe = key.indexOf("e");
+        var posA = key.indexOf("A");
+        var first = parseInt(key.slice(posDe+1, posA));
+        var second = parseInt(key.slice(posA+1, key.length));
+        var options = document.createElement("option");
+        options.value = key;
+        options.text = first.toLocaleString('fr-FR', {maximumFractionDigits: 0})+" - "+second.toLocaleString('fr-FR', {maximumFractionDigits: 0});
+        document.getElementById("Intervales").appendChild(options);
+    })
+    document.getElementById("valeur").value = "";
+}
+function SaveValue()
+{
+    if(document.getElementById("valeur").value == "")
+    {
+        PrintFailure();
+    }
+    else
+    {
+        data[Operator][Place][document.getElementById("Intervales").value] = document.getElementById("valeur").value;
+        SaveData();
+        
+    }
+}
+function UpValue()
+{
+    document.getElementById("valeur").value = data[Operator][Place][document.getElementById("Intervales").value];
 }

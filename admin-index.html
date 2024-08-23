@@ -8,34 +8,56 @@
     <link rel="stylesheet" href="./admin-style.css" type="text/css">
 </head>
 <body>
-    <a href="./index.html" style="text-decoration: none; color: white;"><div style="background-color: blue; border-radius: 40px; width: 200px; border: 1px solid black; text-align: center; box-shadow: 2px 2px black inset">Retour au Simulateur</div></a>
+    <div style="background-color: blue; border-radius: 40px; width: 200px; border: 1px solid black; text-align: center; box-shadow: 2px 2px black inset"><a href="./index.html" style="text-decoration: none; color: white;">Retour au Simulateur</a></div>
     <div id="printing" style="text-align: center; margin-left: 390px; border-radius: 30px; display:none"></div>
     <div class="first-box">
         <div class="left-form">
             <form onsubmit="event.preventDefault(); GetTable()">
-                <p style="font-weight: bold;">Seul la valeur est modifiable</p>
-                <p>Veuillez s&#xe9;lectionner l'&#xe9;l&#xe9;ment &#xe0; modifier</p>
                 <label for="Operateur">
-                    Op&#xe9;rateur: <br>
+                    Op&eacute;rateur: 
                     <select name="Operateur" id="Operateur" onchange="UpdateTheSecondDropdown()">
                         <option value="" selected>--Veuillez choisir une option--</option>
                         <option value="RIA">RIA</option>
                         <option value="MONEYGRAM">MONEYGRAM</option>
                         <option value="WESTERN_UNION">WESTERN_UNION</option>
                     </select>
-                </label><br>
+                </label>
                 <label for="Zone">
-                    Zone: <br>
+                    Zone: 
                     <select name="Zone" id="Zone">
                         <option value="" selected>--Choisissez--</option>
                     </select>
-                </label><br><br>
-                <button type="submit">Afficher la Configuration</button>
+                </label>
+                <button type="submit">Afficher les Configurations</button>
                 <div id="loader" style="visibility: hidden;"></div>
             </form>
-        </div>        
-    <table id="JSON-table"></table>
-    <button onclick="event.preventDefault(); SaveData()" id="SaveButton" disabled>Sauvegarder les modifications</button>
+        </div>
+    <div id="tables">
+        <table id="JSON-table"></table>
+        <table id="JSON-table2"></table>
+        <button onclick="togglePopup()" style="visibility: hidden;" id="toggler">Modifier</button>
+    </div>
+
+    <!--Popup form-->
+      <div id="popupOverlay" class="overlay-container">
+          <div class="popup-box">
+              <h2 style="color: blue;">Modifiation des Valeurs</h2>
+
+              <form class="form-container" onsubmit="event.preventDefault()">
+                  <label class="form-label" for="Intervales">Intervales:</label>
+                  <select name="Intervales" id="Intervales" onchange="UpValue()">
+                    
+                  </select>
+
+                  <label class="form-label" for="valeur">Valeur:</label>
+                  <input class="form-input" type="text" id="valeur" name="valeur">
+  
+                  <button class="btn-submit" type="submit" onclick="SaveValue()" style="margin-left: 26px;" id="SaveButton">Sauvegarder</button>
+              </form>
+  
+              <button class="btn-close-popup" onclick="togglePopup()">Fermer</button>
+          </div>
+      </div>
     </div>
 </body>
 </html>
