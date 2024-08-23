@@ -159,9 +159,9 @@ function UpdateTheSecondDropdown()
 function PrintSuccess()
 {
     printing = document.getElementById("printing");
-    printing.innerHTML = "Data saved successfully";
+    printing.innerHTML = "Sauvegarde effectu&eacute;";
     printing.style.backgroundColor = "#76f216";
-    printing.style.width = "520px";
+    printing.style.width = "320px";
     printing.style.display = "block";
 
     setTimeout(() => {
@@ -171,9 +171,9 @@ function PrintSuccess()
 function PrintFailure()
 {
     printing = document.getElementById("printing");
-    printing.innerHTML = "Error Saving Data";
+    printing.innerHTML = "Impossible de Sauvegarder";
     printing.style.backgroundColor = "red";
-    printing.style.width = "520px";
+    printing.style.width = "320px";
     printing.style.display = "block";
 
     setTimeout(() => {

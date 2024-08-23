@@ -9,7 +9,6 @@
 </head>
 <body>
     <div style="background-color: blue; border-radius: 40px; width: 200px; border: 1px solid black; text-align: center; box-shadow: 2px 2px black inset"><a href="./index.html" style="text-decoration: none; color: white;">Retour au Simulateur</a></div>
-    <div id="printing" style="text-align: center; margin-left: 390px; border-radius: 30px; display:none"></div>
     <div class="first-box">
         <div class="left-form">
             <form onsubmit="event.preventDefault(); GetTable()">
@@ -41,8 +40,8 @@
     <!--Popup form-->
       <div id="popupOverlay" class="overlay-container">
           <div class="popup-box">
-              <h2 style="color: blue;">Modifiation des Valeurs</h2>
-
+            <div id="printing" style="text-align: center; border-radius: 30px; display:none"></div>
+            <h2 style="color: blue;">Modifiation des Valeurs</h2>
               <form class="form-container" onsubmit="event.preventDefault()">
                   <label class="form-label" for="Intervales">Intervales:</label>
                   <select name="Intervales" id="Intervales" onchange="UpValue()">
