@@ -147,13 +147,13 @@ function UpdateTheSecondDropdown()
     if(options[selectedValue])
     {
         options[selectedValue].forEach(function(item)
-    {
-        var option = document.createElement("option");
-        option.value = item;
-        option.text = item;
+        {
+            var option = document.createElement("option");
+            option.value = item;
+            option.text = item;
 
-        secondDropdown.appendChild(option);
-    });
+            secondDropdown.appendChild(option);
+        });
     }
 }
 function PrintSuccess()
