@@ -1,4 +1,0 @@
-AuthType Basic
-AuthName "Admins only"
-AuthUserFile ./.htpasswd
-Require valid-user
