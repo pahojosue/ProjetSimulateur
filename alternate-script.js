@@ -32,7 +32,7 @@ function UpdateTheSecondDropdown()
             {
                 elements[i].textContent = "WU";
             }
-        document.getElementById("MontantAchanger").innerHTML = "5,000,000";
+        document.getElementById("MontantAchanger").innerHTML = "5,066,644";
         ResetTable();
         input.disabled = false;
         document.getElementById("WesternUnionPart").innerHTML = "Actual Fee";
@@ -50,7 +50,7 @@ function UpdateTheSecondDropdown()
         {
             elements[i].textContent = "MONEYGRAM";
         }
-        document.getElementById("MontantAchanger").innerHTML = "1,000,000";
+        document.getElementById("MontantAchanger").innerHTML = "1,053,663";
         ResetTable();
         input.disabled = false;
         document.getElementById("WesternUnionPart").innerHTML = "HT";
@@ -89,11 +89,17 @@ function ReadFormData()
 }
 async function GetHT(amount, operateur, zone)
 {
-        if(amount >=0 && amount <= 1_000_000){
+    if(operateur == "RIA" || operateur == "MONEYGRAM"){
+        if(amount >=0 && amount <= 1_053_663){
             return fetch('http://localhost:3000/data')
             .then(res => res.json())
             .then(data => {
                 const entries = Object.entries(data[operateur][zone]);
+                if(amount > 1_000_000)
+                {
+                    HT = parseInt(entries[entries.length - 1][1]);
+                    return HT;
+                }
                 for(let i = 0; i < entries.length; i++)
                 {
                     var pos = parseInt(entries[i][0].indexOf("A"));
@@ -101,7 +107,7 @@ async function GetHT(amount, operateur, zone)
                     {
                         var HT = parseInt(entries[i][1]);
                         // var TTC = Math.round((amount - (HT * (1 + 0.1925))) / (1 + 0.0025 + (0.0025 * 0.1925) + 0.002));
-                        var TTC = Math.round((amount - (HT * 1.1925)) / 1.00498125);
+                        var TTC = operateur == "MONEYGRAM" ? Math.round((amount - (HT * 1.1925)) / 1.00298125) : Math.round((amount - (HT * 1.1925)) / 1.00498125);
                         if(i!=0){
                             if(TTC < parseInt(entries[i][0].slice(parseInt(entries[i][0].indexOf("e") + 1), pos)))
                             {
@@ -124,9 +130,48 @@ async function GetHT(amount, operateur, zone)
         }
         else
         {
-            printNumberInRange(1_000_000);
+            printNumberInRange(1_053_663);
             return 0;
         }
+    }
+    else if(operateur == "WESTERN_UNION")
+    {
+        return fetch('http://localhost:3000/data')
+        .then(res => res.json())
+        .then(data => {
+            const entries = Object.entries(data[operateur][zone]);
+            if(amount > 5_000_000)
+            {
+                HT = parseInt(entries[entries.length - 1][1]);
+                return HT;
+            }
+            for(let i = 0; i < entries.length; i++)
+            {
+                var pos = parseInt(entries[i][0].indexOf("A"));
+                if(amount <= entries[i][0].slice(pos+1, entries[i][0].length))
+                {
+                    var HT = parseInt(entries[i][1]);                    
+                    var TTC = Math.round((amount - (HT * 1.1925)) / 1.00498125);
+                    if(i!=0){
+                        if(TTC < parseInt(entries[i][0].slice(parseInt(entries[i][0].indexOf("e") + 1), pos)))
+                        {
+                            HT = parseInt(entries[i-1][1]);
+                            break;
+                        }
+                        else
+                        {
+                            return HT;
+                        }
+                    }
+                    else
+                    {
+                        return HT;
+                    }
+                }
+            }
+            return HT;
+        });
+    }
 }
 function PrintErrorMessage()
 {
@@ -172,7 +217,7 @@ async function CalculateAndFill(formData, HT)
     setTimeout(() =>{
         document.getElementById("loader").style.visibility = "hidden";
     }, 200);
-    var TotalTTC = parseInt(Math.round((formData.Montant - (HT * (1.1925)))) / 1.00498125);
+    var TotalTTC = formData.Operateur == "MONEYGRAM" ? parseInt(Math.round((formData.Montant - (HT * (1.1925)))) / 1.00298125) : parseInt(Math.round((formData.Montant - (HT * (1.1925)))) / 1.00498125);
     console.log(TotalTTC);
     var CD = parseInt(Math.round(TotalTTC * 0.0025));
     var TVA = Math.round(((TotalTTC * 0.0025) + HT) * 0.1925);
@@ -221,9 +266,9 @@ async function GenerateResults()
             var formData = ReadFormData();
             if(formData.Operateur == "WESTERN_UNION")
             {
-                if(formData.Montant > 5_000_000)
+                if(formData.Montant > 5_066_644)
                 {
-                    printNumberInRange(5_000_000);
+                    printNumberInRange(5_066_644);
                 }
                 else
                 {

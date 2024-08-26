@@ -89,7 +89,6 @@ function ReadFormData()
 }
 async function GetHT(amount, operateur, zone)
 {
-        if(amount >=0 && amount <= 1_000_000){
             return fetch('http://localhost:3000/data')
             .then(res => res.json())
             .then(data => {
@@ -104,12 +103,6 @@ async function GetHT(amount, operateur, zone)
                     }
                     return HT;
             });
-        }
-        else
-        {
-            printErrorInRange(1_000_000);
-            return 0;
-        }
 }
 function printErrorInValue()
 {
@@ -228,11 +221,18 @@ async function GenerateResults()
             }
             else
             {
+                if(formData.Montant >=0 && formData.Montant <= 1_000_000)
+                {
                     var HT = await GetHT(formData.Montant, formData.Operateur, formData.Zone);
                     if(HT != 0)
                     {
                         CalculateValuesFillTable(formData, HT);
                     }
+                }
+                else
+                {
+                    printErrorInRange(1_000_000);
+                }
             }
     }
     else
