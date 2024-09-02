@@ -29,9 +29,9 @@ function UpdateTheSecondDropdown()
     {
         var elements = document.getElementsByClassName("nomMoneygram");
         for(var i = 0; i < elements.length; i++)
-            {
-                elements[i].textContent = "WU";
-            }
+        {
+            elements[i].textContent = "WU";
+        }
         document.getElementById("MontantAchanger").innerHTML = "5,000,000";
         ResetTable();
         input.disabled = false;
@@ -61,21 +61,22 @@ function UpdateTheSecondDropdown()
     }
     document.getElementById("Zone").addEventListener('change', () =>{
         ResetTable();
-    })
+    });
 }
 function ResetTable()
 {
-            document.getElementById("HT-value").innerText = 0;
-            document.getElementById("CD-value").innerText = 0;
-            document.getElementById("TVA-value").innerText = 0;
-            document.getElementById("TTA-value").innerText = 0;
-            document.getElementById("QPBACM-value").innerText = 0;
-            document.getElementById("AccompteQPM-value").innerText = 0;
-            document.getElementById("QPM-value").innerText = 0;
-            document.getElementById("TotalQPM-value").innerText = 0;
-            document.getElementById("result").innerText = "";
-            document.getElementById("Montant").value = "";
+    document.getElementById("HT-value").innerText = 0;
+    document.getElementById("CD-value").innerText = 0;
+    document.getElementById("TVA-value").innerText = 0;
+    document.getElementById("TTA-value").innerText = 0;
+    document.getElementById("QPBACM-value").innerText = 0;
+    document.getElementById("AccompteQPM-value").innerText = 0;
+    document.getElementById("QPM-value").innerText = 0;
+    document.getElementById("TotalQPM-value").innerText = 0;
+    document.getElementById("result").innerText = "";
+    document.getElementById("Montant").value = "";
 }
+
 function ReadFormData()
 {
     var formData = {};
@@ -87,22 +88,23 @@ function ReadFormData()
     formData["Montant"] = parseInt(formData["Montant"].replaceAll(" ", "").replaceAll(",", ""));
     return formData;
 }
+
 async function GetHT(amount, operateur, zone)
 {
-            return fetch('http://localhost:3000/data')
-            .then(res => res.json())
-            .then(data => {
-                for(let key in data[operateur][zone])
-                    {
-                        var pos = parseInt(key.indexOf("A"));
-                        if(amount <= key.slice(pos+1, key.length))
-                        {
-                            var HT = parseInt(data[operateur][zone][key]);
-                            return HT;
-                        }
-                    }
+    return fetch('http://localhost:3000/data')
+    .then(res => res.json())
+    .then(data => {
+        for(let key in data[operateur][zone])
+            {
+                var pos = parseInt(key.indexOf("A"));
+                if(amount <= key.slice(pos+1, key.length))
+                {
+                    var HT = parseInt(data[operateur][zone][key]);
                     return HT;
-            });
+                }
+            }
+            return HT;
+    });
 }
 function printErrorInValue()
 {
@@ -124,11 +126,10 @@ function printErrorInRange(max)
     var result = document.getElementById("error");
     result.style.display = "block";
     result.innerText = `Le montant de la transaction doit être dans l'intervale 0 à ${max.toLocaleString('fr-FR',{
-                style: 'currency',
-                currency: 'XAF',
-                maximumFractionDigits: 0,
-            })}`;
-    result.style.backgroundColor = "red";
+        style: 'currency',
+        currency: 'XAF',
+        maximumFractionDigits: 0,
+    })}`;
     result.style.backgroundColor = "red";
     result.style.fontWeight = "bold";
     result.style.color = "white";
@@ -139,12 +140,11 @@ function printErrorInRange(max)
     }, 3000);
     ResetTable();
 }
-function printErrorInValue()
+function printErrorSelection()
 {
     var result = document.getElementById("error");
     result.style.display = "block";
     result.innerText = "Veuillez sélectionner une option";
-    result.style.backgroundColor = "red";
     result.style.backgroundColor = "red";
     result.style.fontWeight = "bold";
     result.style.color = "white";
@@ -165,7 +165,7 @@ async function CalculateValuesFillTable(formData, HT)
     var TTA = formData.Operateur == "MONEYGRAM" ? 0 : parseInt(Math.round(formData.Montant * 0.002));
     var QPBACM = formData.Operateur == "RIA" ? parseInt(Math.round(HT * 0.3)) : parseInt(Math.round(HT * 0.2));
     var AccompteQPM = formData.Operateur == "RIA" ? parseInt(Math.round(HT * 0.7 * 0.022)) : parseInt(Math.round(HT * 0.8 * 0.022));
-    var QPM = formData.Operateur == "RIA" ? parseInt(Math.round((HT * 0.7) - AccompteQPM)) : parseInt(Math.round((HT * 0.8) - AccompteQPM))
+    var QPM = formData.Operateur == "RIA" ? parseInt(Math.round((HT * 0.7) - AccompteQPM)) : parseInt(Math.round((HT * 0.8) - AccompteQPM));
     var TotalQPM = parseInt(Math.round(QPM + AccompteQPM));
 
     var TotalTTC = formData.Montant + HT + CD + TVA + TTA;
@@ -200,7 +200,7 @@ async function GenerateResults()
 {
     if(document.getElementById("Montant").disabled == true)
     {
-        printErrorInValue();
+        printErrorSelection();
     }
     else if(checkNumberIsValid(document.getElementById("Montant").value.replaceAll(" ", "").replaceAll(",", ""))){
         var formData = ReadFormData();
@@ -208,7 +208,7 @@ async function GenerateResults()
             {
                 if(formData.Montant > 5_000_000)
                 {
-                    printNumberInRange(5_000_000);
+                    printErrorInRange(5_000_000);
                 }
                 else
                 {
