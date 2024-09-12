@@ -97,8 +97,13 @@ async function GetHT(amount, operateur, zone)
                 const entries = Object.entries(data[operateur][zone]);
                 if(amount > 1_000_000)
                 {
-                    HT = parseInt(entries[entries.length - 1][1]);
-                    return HT;
+                    var HT = parseInt(entries[entries.length - 1][1]);
+                    var TotalTTC = operateur == "MONEYGRAM" ? parseInt(Math.round((amount - (HT * (1.1925)))) / 1.00298125) : parseInt(Math.round((amount - (HT * (1.1925)))) / 1.00498125);
+                    console.log(TotalTTC);
+                    if(amount > TotalTTC){
+                        printNumberInRange(TotalTTC);
+                        return 0;
+                    }
                 }
                 for(let i = 0; i < entries.length; i++)
                 {
@@ -226,7 +231,6 @@ async function CalculateAndFill(formData, HT)
     var AccompteQPM = formData.Operateur == "RIA" ? parseInt(Math.round(HT * 0.7 * 0.022)) : parseInt(Math.round(HT * 0.8 * 0.022));
     var QPM = formData.Operateur == "RIA" ? parseInt(Math.round((HT * 0.7) - AccompteQPM)) : parseInt(Math.round((HT * 0.8) - AccompteQPM))
     var TotalQPM = parseInt(Math.round(QPM + AccompteQPM));
-    var TotalTTC = formData.Montant - (CD + TVA + TTA + HT);
     if(TotalTTC >= 0){
         document.getElementById("HT-value").innerText = HT;
         document.getElementById("CD-value").innerText = CD;
@@ -236,7 +240,6 @@ async function CalculateAndFill(formData, HT)
         document.getElementById("AccompteQPM-value").innerText = AccompteQPM;
         document.getElementById("QPM-value").innerText = QPM;
         document.getElementById("TotalQPM-value").innerText = TotalQPM;
-
         var result = document.getElementById("result");
         result.innerText =`Montant A Recevoir (TTC): ${TotalTTC.toLocaleString('fr-FR',{
             style: 'currency',
