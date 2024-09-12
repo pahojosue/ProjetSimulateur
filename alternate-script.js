@@ -97,13 +97,8 @@ async function GetHT(amount, operateur, zone)
                 const entries = Object.entries(data[operateur][zone]);
                 if(amount > 1_000_000)
                 {
-                    var HT = parseInt(entries[entries.length - 1][1]);
-                    var TotalTTC = operateur == "MONEYGRAM" ? parseInt(Math.round((amount - (HT * (1.1925)))) / 1.00298125) : parseInt(Math.round((amount - (HT * (1.1925)))) / 1.00498125);
-                    console.log(TotalTTC);
-                    if(amount > TotalTTC){
-                        printNumberInRange(TotalTTC);
-                        return 0;
-                    }
+                    HT = parseInt(entries[entries.length - 1][1]);
+                    return HT;
                 }
                 for(let i = 0; i < entries.length; i++)
                 {
@@ -240,6 +235,7 @@ async function CalculateAndFill(formData, HT)
         document.getElementById("AccompteQPM-value").innerText = AccompteQPM;
         document.getElementById("QPM-value").innerText = QPM;
         document.getElementById("TotalQPM-value").innerText = TotalQPM;
+
         var result = document.getElementById("result");
         result.innerText =`Montant A Recevoir (TTC): ${TotalTTC.toLocaleString('fr-FR',{
             style: 'currency',
